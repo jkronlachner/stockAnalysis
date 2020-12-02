@@ -28,6 +28,11 @@ function createWindow() {
     titleBarStyle: 'hidden',
     title: "Stock Analysis",
     fullscreen: true,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+
+    }
   });
 
 
@@ -61,10 +66,15 @@ function showLoadingWindow() {
     hasShadow: true,
     center: true,
     movable: false,
-    resizable: false
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+
+    }
   })
   loading.loadURL(url.format({
-    pathname: path.join(__dirname, "../src/loading.html"),
+    pathname: path.join(__dirname, "../public/loading.html"),
     protocol: "file:",
     slashes: true
   }));

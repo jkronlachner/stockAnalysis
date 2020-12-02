@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {logOut} from "../../redux/actions/user_actions";
 import {useHistory} from 'react-router-dom'
+const electron = window.require("electron");
 
 const useStyles = makeStyles((theme) => ({
     root: {padding: 40},
@@ -62,8 +63,10 @@ export const Settings = () => {
     //</editor-fold>
 
     //mark: render
+    console.log(electron);
     return <div className={classes.root}>
         <Typography variant={"h1"}>Globale Einstellungen</Typography>
+        <p>App Version: {electron.remote.app.getVersion()}</p>
         <Divider className={classes.divider}/>
         <Typography className={classes.subtitle} variant={"subtitle2"}>Indikatoren</Typography>
         <Typography variant={"body1"}>Indikatoren-Files werden lokal abgespeichert, hier kannst du sie löschen wenn du
