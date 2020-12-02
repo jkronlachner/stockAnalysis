@@ -1,0 +1,43 @@
+
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Loading...</title>
+</head>
+<style>
+    .box{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(0deg);
+
+        width: 100px;
+        height: 100px;
+        border: 5px solid #E63946;
+        border-top: 5px solid #4c4c4c;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .bottom_text{
+        position: fixed;
+        font-family: "Biko", sans-serif;
+        bottom: 10%;
+        font-weight: bold;
+        color: #ffffff;
+    }
+
+    @keyframes spin{
+        to{
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+</style>
+<body>
+<div style="display: flex; justify-content: center; align-items: center">
+    <div class="box"></div>
+    <p class="bottom_text">Starting StockAnalysis...</p>
+</div>
+</body>
+</html>
