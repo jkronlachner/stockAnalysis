@@ -116,7 +116,7 @@ const ProjectSettings = ({loading}) => {
             //Load Project into Store
             getProjects().then(() => {
                 //Go to Dashboard with newly loaded Project
-                history.replace('/dashboard')
+                history.push('/dashboard')
             })
         }).catch(() => isUploading(LoadingStatus.error));
     }

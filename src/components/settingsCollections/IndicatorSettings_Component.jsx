@@ -7,7 +7,8 @@ import {AddRounded} from "@material-ui/icons";
 import {CustomTable_Component} from "../dataDisplay/Table_Component";
 import {AddIndicatorDialog_Component} from "../dialogs/AddIndicatorDialog_Component";
 import {useDispatch} from "react-redux";
-import {addIndicator, removeIndicator} from "../../redux/actions/project_actions";
+import {addIndicator, removeBasechart, removeIndicator} from "../../redux/actions/project_actions";
+import {useAlert} from "react-alert";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,13 +36,22 @@ export const IndicatorSettings_Component = ({project}) => {
     //mark: hooks
     const classes = useStyles();
     const dispatch = useDispatch();
+    const alert = useAlert();
     //mark: state
     const [dialogOpen, setDialogOpen] = useState(false);
 
 
     //<editor-fold desc="helpers">
     const onDelete = delete_id => {
-        dispatch(removeIndicator(delete_id, project.projectId))
+        alert.show("Bist du sicher das du diesen Indikator löschen willst?", {
+            title: "Bestätigen.",
+            closeCopy: "Abbrechen",
+            actions: [{
+                copy: "Löschen",
+                onClick: () => dispatch(removeIndicator(delete_id, project.projectId)),
+            }]
+        })
+
     }
 
     function handleDone(indicator) {

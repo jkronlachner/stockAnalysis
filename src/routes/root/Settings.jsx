@@ -72,10 +72,6 @@ export const Settings = () => {
         <Typography variant={"body1"}>Indikatoren-Files werden lokal abgespeichert, hier kannst du sie löschen wenn du
             mehr Speicherplatz brauchst.</Typography>
 
-        <input
-            style={{marginTop: 40}}
-            type={"file"}
-        />
         <Button className={classes.deleteButton}>Indikatoren löschen.</Button>
 
         <Divider className={classes.divider}/>

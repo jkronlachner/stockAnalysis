@@ -9,16 +9,26 @@ import {Provider} from "react-redux";
 import {store} from "./redux/reducers";
 import SnackbarProvider from "./service/SnackbarProvider";
 import {SkeletonTheme} from "react-loading-skeleton";
+import {transitions, positions, Provider as AlertProvider} from 'react-alert'
+import AlertMUITemplate from "react-alert-template-mui";
+import {AlertTemplate} from "./components/dialogs/CustomAlertTemplate";
 
+const alertOptions = {
+    position: positions.MIDDLE,
+    timeout: 5000,
+    transition: transitions.SCALE
+}
 
 ReactDOM.render(<Provider store={store}>
-    <SkeletonTheme color={"#cdcdcd"} highlightColor={"#efefef"}>
+        <SkeletonTheme color={"#cdcdcd"} highlightColor={"#efefef"}>
             <ThemeProvider theme={LightTheme}>
-                <SnackbarProvider/>
-                <RoutingIndex/>
+                <AlertProvider template={AlertTemplate}>
+                    <SnackbarProvider/>
+                    <RoutingIndex/>
+                </AlertProvider>
             </ThemeProvider>
-    </SkeletonTheme>
-        </Provider>,
+        </SkeletonTheme>
+    </Provider>,
     document.getElementById('root')
 );
 

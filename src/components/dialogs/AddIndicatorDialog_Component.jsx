@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles, useTheme} from "@material-ui/styles";
 import Dialog from "@material-ui/core/Dialog";
 import {Indicator, Project} from "../../objects/project";
@@ -120,10 +120,18 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
     //MARK: states
     const [selectedBasechart, setBasechart] = useState();
     const [indicators, setIndicators] = useState([]);
-    const [indicatorTitleError, setIndicatorTitleError] = useState();
     const [dropdownError, setDropdownError] = useState();
-    const [indicatorTitle, setIndicatorTitle] = useState();
     const [indicatorError, setIndicatorError] = useState();
+
+    //Not used right now
+    //const [indicatorTitleError, setIndicatorTitleError] = useState();
+    //const [indicatorTitle, setIndicatorTitle] = useState();
+
+    useEffect(() => {
+        setIndicatorError(null);
+        setDropdownError(null);
+        setIndicators([]);
+    },[props.open])
 
     //<editor-fold desc="helpers">
     function handleCreateNew(index) {
@@ -154,13 +162,13 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
         if (!selectedBasechart) {
             setDropdownError("Du hast noch kein Basischart ausgewählt.")
         }
-        if (!indicatorTitle) {
+        /*if (!indicatorTitle) {
             setIndicatorTitleError("Du hast der Indikatorenkombination noch keinen Namen gegeben.")
-        }
+        }*/
         if (!indicators || indicators.filter(v => v.building === false).length === 0) {
             setIndicatorError("Noch keine Indikatoren konfiguriert.")
         }
-        if (!indicatorError && !indicatorTitleError && !dropdownError) {
+        if (!indicatorError /*&& !indicatorTitleError*/ && !dropdownError) {
             createIndicatorString();
         }
     }
@@ -189,10 +197,10 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
         setBasechart(props.project.basecharts.find(value => value.chartname === event.target.value));
     }
 
-    function handleTitleChange(event) {
+    /*function handleTitleChange(event) {
         setIndicatorTitleError(null);
         setIndicatorTitle(event.target.value);
-    }
+    }*/
 
     //</editor-fold>
 
@@ -210,7 +218,7 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
                 <span style={{color: theme.palette.primary.main}}> erstellen.</span>
             </Typography>
             <div className={classes.topDialog}>
-                <div
+                {/*<div
                     style={{marginRight: 20, flexGrow: 1}}
                 >
                     <TextField_Component
@@ -222,7 +230,7 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
                         label={"Indikatorenkombinationsname"}
                         placeholder={"Indikatorenkombinationsname"}
                     />
-                </div>
+                </div>*/}
                 <div
                     style={{marginRight: 20, flexGrow: 1}}
                 >

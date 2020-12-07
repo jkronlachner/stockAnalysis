@@ -55,9 +55,9 @@ export const ProjectTab_Component = ({project, isLoading = false}) => {
         console.log("Clicked project was: ")
         if (project.projectId) {
             if (project.status !== 2) {
-                history.replace(`/detail/${project.projectId}`);
+                history.push(`/detail/${project.projectId}`);
             } else {
-                history.replace(`/project/${project.projectId}`);
+                history.push(`/project/${project.projectId}`);
             }
         }
     }

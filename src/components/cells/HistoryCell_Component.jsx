@@ -10,13 +10,12 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import {useDispatch} from "react-redux";
 import {deleteProject} from "../../redux/actions/project_actions";
 import {useHistory} from "react-router-dom";
-
+import {useAlert} from "react-alert";
 const useStyles = makeStyles((theme) => ({
-    root:{
+    root: {
         backgroundColor: theme.palette.background.default,
         borderColor: "red",
         width: "calc(100% - 20px)",
-        flexGrow: 1,
         display: "flex",
         height: 90,
         margin: 20,
@@ -39,9 +38,15 @@ const useStyles = makeStyles((theme) => ({
     },
     information: {
         marginLeft: "auto"
+    },
+    deleteButton: {
+        position: "absolute",
+        zIndex: 2,
+        right: "10%",
+        height: 50,
+        margin: 20,
     }
 }));
-
 
 
 export const HistoryCell_Component = ({project, duration}) => {
@@ -50,15 +55,16 @@ export const HistoryCell_Component = ({project, duration}) => {
     const theme = useTheme();
     const dispatch = useDispatch();
     const history = useHistory();
+    const alert = useAlert();
 
     //<editor-fold desc="Helper Methods">
     function proceedToProject() {
         console.log("Clicked project was: ")
-        if(project.projectId){
-            if(project.status !== 2){
-                history.replace(`/detail/${project.projectId}`);
-            }else{
-                history.replace(`/project/${project.projectId}`);
+        if (project.projectId) {
+            if (project.status !== 2) {
+                history.push(`/detail/${project.projectId}`);
+            } else {
+                history.push(`/project/${project.projectId}`);
             }
         }
     }
@@ -66,20 +72,37 @@ export const HistoryCell_Component = ({project, duration}) => {
     //</editor-fold>
 
     //MARK: RENDERS
-    return <ButtonBase onClick={proceedToProject} className={classes.root}>
+    return(
+
+    <div className={classes.root}>
         <div>
             <IconButton color={"primary"} onClick={() => {
-                dispatch(deleteProject(project.projectId))
+                alert.show("Bist du sicher das du dieses Projekt löschen willst?", {
+                    title: "Bestätigen.",
+                    closeCopy: "Abbrechen",
+                    actions: [{
+                        copy: "Löschen",
+                        onClick: () => dispatch(deleteProject(project.projectId)),
+                    }]
+                })
             }}>
                 <DeleteIcon fontSize={"large"}/>
             </IconButton>
         </div>
-        <Typography variant={"h2"}>{project.projectTitle || <Skeleton  width={200} height={50}/>}</Typography>
-        <div className={classes.information}>
-            <Typography variant={"h2"} style={{color: theme.palette.primary.main, display: "flex", flexDirection: "row"}}>{project.correlation && project.status !== Status.draft ? <Skeleton width={80} height={30}/> : project.correlation ?? ""}</Typography>
-            <Typography variant={"body1"}>{duration && project.status !== Status.draft ? <Skeleton width={100} height={30}/> : duration ?? ""}</Typography>
-        </div>
+        <ButtonBase style={{flexGrow: 1}} onClick={proceedToProject}>
+            <Typography variant={"h2"}>{project.projectTitle || <Skeleton width={200} height={50}/>}</Typography>
+            <div className={classes.information}>
+                <Typography variant={"h2"} style={{
+                    color: theme.palette.primary.main,
+                    display: "flex",
+                    flexDirection: "row"
+                }}>{project.correlation && project.status !== Status.draft ?
+                    <Skeleton width={80} height={30}/> : project.correlation ?? ""}</Typography>
+                <Typography variant={"body1"}>{duration && project.status !== Status.draft ?
+                    <Skeleton width={100} height={30}/> : duration ?? ""}</Typography>
+            </div>
 
-        <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
-    </ButtonBase>
+            <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
+        </ButtonBase>
+    </div>)
 }

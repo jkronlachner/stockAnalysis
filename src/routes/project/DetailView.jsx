@@ -108,7 +108,7 @@ const DetailView = ({loading}) => {
         <LinearProgress variant={"query"} color={"primary"}/> :
         <div className={classes.root}>
             <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
-                <IconButton onClick={() => history.replace("/dashboard")}>
+                <IconButton onClick={() => history.goBack()}>
                     <ArrowBack/>
                 </IconButton>
                 <Typography variant={"h2"}>Details: {project.projectTitle}</Typography>

@@ -65,7 +65,7 @@ export const LogIn = () => {
             signUpUser(usernameReference.current.value, passwordReference.current.value).then(() => {
                 setLoading(false)
                 console.log("Sucessfully created user! Redirecting...")
-                history.replace("/dashboard")
+                history.push("/dashboard")
             }).catch(() => {
                 setLoading(false);
                 setError("Fehler bei der Anmeldung.")
@@ -73,7 +73,7 @@ export const LogIn = () => {
         } else {
             signInUser(usernameReference.current.value, passwordReference.current.value).then(() => {
                 console.log("Successfully logged in!");
-                history.replace("/dashboard");
+                history.push("/dashboard");
             }).catch(() => {
                 setLoading(false);
                 setError("Fehler bei der Anmeldung.")

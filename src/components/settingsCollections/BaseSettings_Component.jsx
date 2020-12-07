@@ -17,6 +17,8 @@ import {ImportBasechartDialog_Component} from "../dialogs/ImportBasechartDialog_
 import {uploadFile, uploadTargetdataFile} from "../../service/backendServices/ProjectService";
 import {Alert} from '@material-ui/lab';
 import LinearProgress from "@material-ui/core/LinearProgress";
+import {useDropzone} from "react-dropzone";
+import {useAlert} from "react-alert";
 
 const _ = require('lodash');
 
@@ -65,9 +67,10 @@ function BaseSettings_Component(props: Props) {
     //mark: hooks
     const classes = useStyles();
     const theme = useTheme();
-    const {onClick, HiddenFileInput, files} = useFilePicker();
     const zieldatensatzPicker = useFilePicker();
     const dispatch = useDispatch();
+    const alert = useAlert();
+    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({accept: 'text/plain, application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
 
     //mark: states
     const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -76,11 +79,11 @@ function BaseSettings_Component(props: Props) {
 
     //<editor-fold desc="lifecycle">
     useEffect(() => {
-        if (files.length === 0) {
+        if (acceptedFiles.length === 0) {
             return;
         }
         setImportDialogOpen(true);
-    }, [files])
+    }, [acceptedFiles])
 
     useEffect(() => {
         if (zieldatensatzPicker.files.length === 0) {
@@ -88,21 +91,31 @@ function BaseSettings_Component(props: Props) {
         }
         uploadTargetdataFile({
             file: zieldatensatzPicker.files[0],
-            setProgress: p => setLoading({...loading, [0]: {name: "Zieldatensatz", error: null, progress: p}})
+            setProgress: p => setLoading({...loading, '0': {name: "Zieldatensatz: " + zieldatensatzPicker.files[0].name, error: null, progress: p}})
         })
             .then(r => {
                 console.log("Uploaded!:", r)
                 handleChange("zieldatensatz", r.id)
-                setLoading(_.omit(loading, 0 + ''))
+                setLoading(_.omit(loading, '0'))
+                if (_.values(loading).length === 0) {
+                    setLoading(null);
+                }
             })
-            .catch(e => setLoading({...loading, [0]: {name: "Zieldatensatz", error: e, progress: -1}}))
+            .catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
     }, [zieldatensatzPicker.files])
     //</editor-fold>
 
 
     //<editor-fold desc="helpers">
     const onDelete = delete_id => {
-        dispatch(removeBasechart(delete_id, props.project.projectId))
+        alert.show("Bist du sicher das du dieses Basischart löschen willst?", {
+            title: "Bestätigen.",
+            closeCopy: "Abbrechen",
+            actions: [{
+                copy: "Löschen",
+                onClick: () => dispatch(removeBasechart(delete_id, props.project.projectId)),
+            }]
+        })
     }
     const handleChange = (caller: string, data) => {
         dispatch(modifyProject(props.project.projectId, caller, data))
@@ -203,11 +216,22 @@ function BaseSettings_Component(props: Props) {
 
     }
 
+    function renderDrop() {
+        return <section className="container">
+            <div {...getRootProps({className: 'dropzone'})}>
+                <input {...getInputProps()} />
+                <p>Ziehe deine Files hier hinein oder klicke um sie auszuwählen.</p>
+            </div>
+        </section>;
+    }
+
     //</editor-fold>
 
-    //mark: render
+
+
+//mark: render
     return <div className={classes.root}>
-        <ImportBasechartDialog_Component files={files} setOpen={setImportDialogOpen} open={importDialogOpen}
+        <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
         <Grid container direction="row"
               justify="center"
@@ -264,10 +288,7 @@ function BaseSettings_Component(props: Props) {
                     }}/>
             </Grid>
             <Grid item xs={12}>
-                <HiddenFileInput accept=".csv" multiple={true}/>
-                <Typography variant={"caption"} style={{color: theme.palette.text.secondary, fontWeight: "normal"}}>Mit
-                    Drag&Drop neue Basischarts hinzufügen, oder <span onClick={props.detail ? null : onClick}
-                                                                      className={classes.uploadButton}>hier</span> klicken</Typography>
+                {renderDrop()}
             </Grid>
             <Grid item xs={12}>
                 <TimeInput_Component readOnly={props.detail} timeunit={props.project.timeunit}
