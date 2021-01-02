@@ -78,7 +78,11 @@ export const RootView = () => {
             </div>
             <div className={classes.container}>
                 {hideNav ? <IconButton onClick={() => {
+                    if(history.length < 1){
                         history.goBack()
+                    }else{
+                        history.replace("/dashboard")
+                    }
                 }}><ArrowBackIosRounded/></IconButton> : <></>}
                 <Switch>
                     <Route path={"/dashboard"}>

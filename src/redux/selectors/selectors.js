@@ -1,4 +1,5 @@
 import {LoadingStatus} from "../../objects/enums/loading.enum";
+import {Basechart, Project} from "../../objects/project";
 
 const getAllProjects = state => state.projects ?? {};
 const getProjectById = (state, id) => {
@@ -15,5 +16,10 @@ const getLoadingStatus = (state) => {
         return {status: state.loading.loading ? LoadingStatus.loading : LoadingStatus.loaded, error: ""}
     }
 }
+const hasIndicator = (project: Project, basechartId: String) => {
+    return project.indicator.some(value => {
+        return value.basechart._id === basechartId
+    });
+}
 
-export {getAllProjects, getProjectById, getLoadingStatus};
+export {getAllProjects, getProjectById, getLoadingStatus, hasIndicator};

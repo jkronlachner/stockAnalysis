@@ -12,6 +12,7 @@ import {IndicatorCreator_Component} from "../inputs/IndicatorCreator_Component";
 import {Indicator_Component} from "../dataDisplay/Indicator_Component";
 import Fab from "@material-ui/core/Fab";
 import {AddRounded} from "@material-ui/icons";
+import {Status} from "../../objects/enums/status.enum";
 
 //<editor-fold desc="Overhead">
 const useStyles = makeStyles((theme) => ({
@@ -188,7 +189,7 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
                 indicatorString += "::" + value.selectedColumn
             }
         });
-        let indicator = new Indicator(indicatorString, 0, selectedBasechart);
+        let indicator = new Indicator(indicatorString, 0, selectedBasechart, Status.waiting);
         props.onDone(indicator);
     }
 

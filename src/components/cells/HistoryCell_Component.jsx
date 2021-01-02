@@ -11,6 +11,8 @@ import {useDispatch} from "react-redux";
 import {deleteProject} from "../../redux/actions/project_actions";
 import {useHistory} from "react-router-dom";
 import {useAlert} from "react-alert";
+import {permaRemoveProject} from "../../service/backendServices/ProjectService";
+
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.default,
@@ -59,7 +61,6 @@ export const HistoryCell_Component = ({project, duration}) => {
 
     //<editor-fold desc="Helper Methods">
     function proceedToProject() {
-        console.log("Clicked project was: ")
         if (project.projectId) {
             if (project.status !== 2) {
                 history.push(`/detail/${project.projectId}`);
@@ -69,40 +70,61 @@ export const HistoryCell_Component = ({project, duration}) => {
         }
     }
 
+    function removeProject() {
+        if(project.status !== Status.draft){
+            permaRemoveProject(project.projectId).then(r => {
+                dispatch(deleteProject(project.projectId))
+                alert.show("Projekt gelöscht", {
+                    title: "",
+                    closeCopy: "Okay",
+                    actions: []
+                })
+            }).catch(e => alert.show("Projekt konnte nicht gelöscht werden.", {
+                title: "Fehler.",
+                closeCopy: "Okay",
+                actions: [
+                    {
+                        copy: "Nochmal versuchen.",
+                        onClick: () => removeProject(),
+                    }
+                ]
+            }));
+        }
+    }
+
     //</editor-fold>
 
     //MARK: RENDERS
-    return(
-
-    <div className={classes.root}>
-        <div>
-            <IconButton color={"primary"} onClick={() => {
-                alert.show("Bist du sicher das du dieses Projekt löschen willst?", {
-                    title: "Bestätigen.",
-                    closeCopy: "Abbrechen",
-                    actions: [{
-                        copy: "Löschen",
-                        onClick: () => dispatch(deleteProject(project.projectId)),
-                    }]
-                })
-            }}>
-                <DeleteIcon fontSize={"large"}/>
-            </IconButton>
-        </div>
-        <ButtonBase style={{flexGrow: 1}} onClick={proceedToProject}>
-            <Typography variant={"h2"}>{project.projectTitle || <Skeleton width={200} height={50}/>}</Typography>
-            <div className={classes.information}>
-                <Typography variant={"h2"} style={{
-                    color: theme.palette.primary.main,
-                    display: "flex",
-                    flexDirection: "row"
-                }}>{project.correlation && project.status !== Status.draft ?
-                    <Skeleton width={80} height={30}/> : project.correlation ?? ""}</Typography>
-                <Typography variant={"body1"}>{duration && project.status !== Status.draft ?
-                    <Skeleton width={100} height={30}/> : duration ?? ""}</Typography>
+    return (
+        <div className={classes.root}>
+            <div>
+                <IconButton color={"primary"} onClick={() => {
+                    alert.show("Bist du sicher das du dieses Projekt löschen willst?", {
+                        title: "Bestätigen.",
+                        closeCopy: "Abbrechen",
+                        actions: [{
+                            copy: "Löschen",
+                            onClick: () => removeProject(),
+                        }]
+                    })
+                }}>
+                    <DeleteIcon fontSize={"large"}/>
+                </IconButton>
             </div>
+            <ButtonBase style={{flexGrow: 1}} onClick={proceedToProject}>
+                <Typography variant={"h2"}>{project.projectTitle || <Skeleton width={200} height={50}/>}</Typography>
+                <div className={classes.information}>
+                    <Typography variant={"h2"} style={{
+                        color: theme.palette.primary.main,
+                        display: "flex",
+                        flexDirection: "row"
+                    }}>{project.correlation && project.status !== Status.draft ?
+                        <Skeleton width={80} height={30}/> : project.correlation ?? ""}</Typography>
+                    <Typography variant={"body1"}>{duration && project.status !== Status.draft ?
+                        <Skeleton width={100} height={30}/> : duration ?? ""}</Typography>
+                </div>
 
-            <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
-        </ButtonBase>
-    </div>)
+                <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
+            </ButtonBase>
+        </div>)
 }

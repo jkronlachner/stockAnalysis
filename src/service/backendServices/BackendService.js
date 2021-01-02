@@ -98,6 +98,8 @@ export const signOutUser = () => {
     store.dispatch(logOut())
 }
 
+
+
 function updateProjects(contents) {
 
 }

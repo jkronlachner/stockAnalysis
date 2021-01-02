@@ -19,6 +19,7 @@ import {Alert} from '@material-ui/lab';
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {useDropzone} from "react-dropzone";
 import {useAlert} from "react-alert";
+import {hasIndicator} from "../../redux/selectors/selectors";
 
 const _ = require('lodash');
 
@@ -95,7 +96,7 @@ function BaseSettings_Component(props: Props) {
         })
             .then(r => {
                 console.log("Uploaded!:", r)
-                handleChange("zieldatensatz", r.id)
+                handleChange("zieldatensatz", {id: r, filename: zieldatensatzPicker.files[0].name})
                 setLoading(_.omit(loading, '0'))
                 if (_.values(loading).length === 0) {
                     setLoading(null);
@@ -108,14 +109,23 @@ function BaseSettings_Component(props: Props) {
 
     //<editor-fold desc="helpers">
     const onDelete = delete_id => {
-        alert.show("Bist du sicher das du dieses Basischart löschen willst?", {
-            title: "Bestätigen.",
-            closeCopy: "Abbrechen",
-            actions: [{
-                copy: "Löschen",
-                onClick: () => dispatch(removeBasechart(delete_id, props.project.projectId)),
-            }]
-        })
+        if(hasIndicator(props.project, delete_id)){
+            alert.show("Du hast mit diesem Basischart bereits einen Indikator angelegt. Bitte entferne diesen zuerst.", {
+                title: "Achtung.",
+                closeCopy: "Okay",
+                actions: []
+            })
+        }else{
+            alert.show("Bist du sicher das du dieses Basischart löschen willst?", {
+                title: "Bestätigen.",
+                closeCopy: "Abbrechen",
+                actions: [{
+                    copy: "Löschen",
+                    onClick: () => dispatch(removeBasechart(delete_id, props.project.projectId)),
+                }]
+            })
+        }
+
     }
     const handleChange = (caller: string, data) => {
         dispatch(modifyProject(props.project.projectId, caller, data))
@@ -258,7 +268,7 @@ function BaseSettings_Component(props: Props) {
                     </Typography>
                     {props.project?.zieldatensatz ?
                         <div style={{display: "flex", flexDirection: "row"}}>
-                            <p>{props.project.zieldatensatz}</p>
+                            <p>{props.project.zieldatensatz.filename}</p>
                             <IconButton disabled={props.detail}
                                         onClick={zieldatensatzPicker.onClick}><EditRounded/></IconButton>
                         </div>

@@ -35,12 +35,13 @@ export class Indicator {
     combinations: number;
     basechart: Basechart;
     column: string;
+    status: Status
 
 
-    constructor(definition: string, combinations: number, basechart: Basechart, column: string) {
+    constructor(definition: string, combinations: number, basechart: Basechart, status: Status) {
         this.definition = definition;
         this.combinations = combinations;
         this.basechart = basechart;
-        this.column = column;
+        this.status = status;
     }
 }

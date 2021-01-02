@@ -9,6 +9,8 @@ import {AddIndicatorDialog_Component} from "../dialogs/AddIndicatorDialog_Compon
 import {useDispatch} from "react-redux";
 import {addIndicator, removeBasechart, removeIndicator} from "../../redux/actions/project_actions";
 import {useAlert} from "react-alert";
+import {Indicator} from "../../objects/project";
+import {generateIndicator} from "../../service/backendServices/IndicatorService";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,9 +56,12 @@ export const IndicatorSettings_Component = ({project}) => {
 
     }
 
-    function handleDone(indicator) {
+    function handleDone(indicator: Indicator) {
         setDialogOpen(false);
         dispatch(addIndicator(indicator, project.projectId));
+        generateIndicator(project, indicator.definition, indicator.basechart._id).then(r =>
+            console.log(r)
+        ).catch(e => console.log(e))
     }
 
     //</editor-fold>

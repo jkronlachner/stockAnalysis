@@ -28,16 +28,15 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
         height: 920,
+        movable: true,
         titleBarStyle: 'hidden',
         title: "Stock Analysis",
-        fullscreen: true,
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true
 
         }
     });
-
 
     // Determine what to render based on environment
     mainWindow.loadURL(
@@ -122,12 +121,10 @@ app.on("ready", () => {
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
-    const jarPath = app.getAppPath() + (isDev ? '/public/veskur-core-backend-0.0.1-1.jar' : '/build/veskur-core-backend-0.0.1-1.jar')
-    //Users/juliankronlachner/Desktop/lab73/Diplomarbeit/stockAnalysis/public
-    //Users/juliankronlachner/Desktop/lab73/Diplomarbeit/stockAnalysis/public/veskur-core-backend-0.0.1-1.jar
+    const jarPath = app.getAppPath() + (isDev ? '/public/veskur-core-backend.jar' : '/build/veskur-core-backend.jar')
     child = spawn('java', ['-jar', jarPath, ''])
     child.stdout.on('data', data => {
-        log.info(["[backend_output] : ", data.toString()]);
+        log.info([data.toString()]);
         if (data.toString().includes("Started")) {
             createWindow();
         }
@@ -156,11 +153,24 @@ app.on("window-all-closed", () => {
     }
 });
 
-app.on("before-quit", () => {
-    console.log("Quitting backend!")
-    const kill = require('tree-kill');
-    kill(child.pid);
+app.on("before-quit", (e) => {
+    var choice = electron.dialog.showMessageBox(this, {
+        type: 'question',
+        buttons: ['Yes', 'No'],
+        title: 'Achtung',
+        message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
+    })
+    if(choice===1){
+        e.preventDefault()
+    }else{
+        console.log("Quitting backend!")
+        const kill = require('tree-kill');
+        kill(child.pid);
+    }
+
 })
+
+
 
 app.on("activate", () => {
     if (mainWindow !== null) {

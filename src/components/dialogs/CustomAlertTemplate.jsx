@@ -25,7 +25,10 @@ export const AlertTemplate = ({ style, options, message, close }) => (
                 {options.closeCopy}
             </Button>
             {options.actions.map(x => {
-                return (<Button onClick={x.onClick} color="primary">
+                return (<Button onClick={() => {
+                    x.onClick()
+                    close()
+                }} color="primary">
                     {x.copy}
                     </Button>)
             })}

@@ -15,7 +15,7 @@ const getAllProjects = () => {
     };
     console.log("Getting Projects for: " + userId())
 
-    return fetch( REQUEST_URL + "/user/" + userId(), requestOptions)
+    return fetch(REQUEST_URL + "/user/" + userId(), requestOptions)
         .then(response => response.text())
         .then(contents => Promise.resolve(contents))
         .catch(error => Promise.reject(error));
@@ -26,10 +26,10 @@ const getSingleProject = (projectId) => {
         method: 'GET',
         redirect: 'follow'
     };
-    return fetch( REQUEST_URL + "/project/" + projectId, requestOptions)
-            .then(response => response.text())
-            .then(result => Promise.resolve(result))
-            .catch(error => Promise.reject(error));
+    return fetch(REQUEST_URL + "/project/" + projectId, requestOptions)
+        .then(response => response.text())
+        .then(result => Promise.resolve(result))
+        .catch(error => Promise.reject(error));
 
 }
 
@@ -47,8 +47,8 @@ const uploadFile = ({file, nickname, columns, setProgress}) => {
     var config = {
         method: 'post',
         url: REQUEST_URL + "/file",
-        data : formData,
-        onUploadProgress : (progress: ProgressEvent) => {
+        data: formData,
+        onUploadProgress: (progress: ProgressEvent) => {
             setProgress((progress.loaded / progress.total * 100).toFixed(0))
         }
     };
@@ -95,10 +95,24 @@ const createNewProject = (project: Project) => {
     )
 }
 
+const permaRemoveProject = (projectId: String) => {
+    console.log("removing project from db");
+    var config = {
+        url: REQUEST_URL + "/project/" + projectId,
+        method: 'DELETE',
+    };
+    return new Promise((resolve, reject) =>
+        Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
+    )
+}
+
+
+
 export {
+    permaRemoveProject,
     uploadTargetdataFile,
     getAllProjects,
     getSingleProject,
     uploadFile,
-    createNewProject
+    createNewProject,
 }

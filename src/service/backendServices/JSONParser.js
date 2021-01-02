@@ -84,8 +84,7 @@ export function parseProjectToProjectDTO(project: Project) {
         status: statusToString(0),
         timeUnit: project.timeunit,
         userId: userId(),
-        //TODO: Get real TargetDataSetId
-        targetDataSetId: project.zieldatensatz,
+        targetDataSetId: project.zieldatensatz.id,
     }
     const referenceCharts = project.basecharts.map(x => x._id);
     const indicators = project.indicator.map(x =>{ return {

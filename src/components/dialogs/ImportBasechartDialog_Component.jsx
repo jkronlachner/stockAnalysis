@@ -54,9 +54,10 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
         files.forEach(file => {
             const filePromise = new Promise(resolve => {
                 Papa.parse(file, {
-                    header: true,
-                    preview: 4,
                     worker: true,
+                    header: true,
+                    fastMode: true,
+                    preview: 4,
                     complete: (result) => {
                         tempCharts.push({
                             name: file.name,
@@ -76,6 +77,11 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
         Promise.all(promises).then(() => setBasecharts(tempCharts))
     }, [files])
     useEffect(() => isDoneButtonDisabled(), [basecharts])
+    useEffect(() => {
+        setStep(0);
+        setBasecharts([]);
+        setDoneButtonEnabled(false);
+    }, [])
     //</editor-fold>
 
 
@@ -92,12 +98,14 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
         }
         setStep((prevActiveStep) => prevActiveStep - 1);
     };
+
     function updateGrouped(event) {
         let copy = _.clone(basecharts);
         copy[step].grouped = event.target.checked;
         copy[step].selectedRows = [];
         setBasecharts(copy);
     }
+
     function dialogDone() {
         setOpen(false);
 
@@ -120,6 +128,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     }
 
     function isDoneButtonDisabled() {
+
         setDoneButtonEnabled(_.every(basecharts, x => {
             console.log("truth check for : ", x)
             if (x.grouped) {
@@ -153,6 +162,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             </Table>
         </TableContainer>
     }
+
     function renderCellAutocomplete(label: string, multiple: boolean) {
         return <Autocomplete
             options={basecharts[step].headers}
@@ -174,6 +184,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             )}
         />;
     }
+
     function renderGroupSelector() {
         return <>
             <Grid item xs={3}>
@@ -235,9 +246,13 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                 </div>
                 <div style={{marginTop: "2rem"}}>
                     <Typography variant={"subtitle2"}>Anderes</Typography>
-                    <TextField_Component value={basecharts[step].nickname ?? ""} label={"Spitzname"} placeholder={basecharts[step].name} onChange={handleNicknameChange}/>
+                    <TextField_Component value={basecharts[step].nickname ?? ""} label={"Spitzname"}
+                                         placeholder={basecharts[step].name} onChange={handleNicknameChange}/>
                 </div>
-            </Box> : <Skeleton height={50} count={10} />}
+            </Box> : <div>
+                <Typography variant={"h1"}>Lade Files.</Typography>
+                <Typography variant={"body1"}>Falls eines der Datein über 50MB hat kann das eine Weile dauern.</Typography>
+            </div>}
         </DialogContent>
         <MobileStepper
             activeStep={step}
