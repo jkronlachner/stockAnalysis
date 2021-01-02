@@ -154,9 +154,9 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", (e) => {
-    var choice = electron.dialog.showMessageBox(this, {
-        type: 'question',
-        buttons: ['Yes', 'No'],
+    var choice = electron.dialog.showMessageBoxSync(mainWindow, {
+        type: 'warning',
+        buttons: ['Nein', 'Ja'],
         title: 'Achtung',
         message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
     })
