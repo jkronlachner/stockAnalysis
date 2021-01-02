@@ -71,7 +71,7 @@ export const HistoryCell_Component = ({project, duration}) => {
     }
 
     function removeProject() {
-        if(project.status !== Status.draft){
+        if (project.status !== Status.draft) {
             permaRemoveProject(project.projectId).then(r => {
                 dispatch(deleteProject(project.projectId))
                 alert.show("Projekt gelöscht", {
@@ -89,6 +89,9 @@ export const HistoryCell_Component = ({project, duration}) => {
                     }
                 ]
             }));
+        } else {
+            dispatch(deleteProject(project.projectId))
+
         }
     }
 
@@ -112,7 +115,8 @@ export const HistoryCell_Component = ({project, duration}) => {
                 </IconButton>
             </div>
             <ButtonBase style={{flexGrow: 1}} onClick={proceedToProject}>
-                <Typography variant={"h2"}>{project.projectTitle || <Skeleton width={200} height={50}/>}</Typography>
+                <Typography variant={"h2"}>{project.projectTitle ||
+                <Skeleton width={200} height={50}/>}</Typography>
                 <div className={classes.information}>
                     <Typography variant={"h2"} style={{
                         color: theme.palette.primary.main,
