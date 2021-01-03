@@ -1,5 +1,7 @@
 //@flow
 import {BACKEND_URL} from "../../settings";
+import {store} from "../../redux/reducers";
+import Axios from "axios";
 
 const REQUEST_URL = BACKEND_URL;
 
@@ -40,8 +42,17 @@ const signIn = (username, password) => {
     });
 }
 
-
+const checkUser = () => {
+    const userId = () => store.getState().user.userId;
+    var config = {
+        method: 'get',
+        url: REQUEST_URL + "/user/hasUser/" + userId(),
+    };
+    return new Promise((resolve, reject) =>
+        Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
+    )
+}
 
 export {
-   signUp, signIn
+   signUp, signIn, checkUser
 }

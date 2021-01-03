@@ -122,7 +122,7 @@ app.on("ready", () => {
     log.info("Searching for jar in Path: " + app.getAppPath());
 
     const jarPath = app.getAppPath() + (isDev ? '/public/veskur-core-backend.jar' : '/build/veskur-core-backend.jar')
-    child = spawn('java', ['-jar', jarPath, ''])
+    child = spawn('java', ['-jar', jarPath, '--spring.profiles.active=prod'])
     child.stdout.on('data', data => {
         log.info([data.toString()]);
         if (data.toString().includes("Started")) {
@@ -140,6 +140,7 @@ app.on("ready", () => {
             title: "Fehler beim Starten der Applikation",
             message: "Fehlercode: " + code,
         });
+        loading.close();
     })
     //END OF BACKEND CHECK
 });
@@ -160,7 +161,7 @@ app.on("before-quit", (e) => {
         title: 'Achtung',
         message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
     })
-    if(choice===1){
+    if(choice===0){
         e.preventDefault()
     }else{
         console.log("Quitting backend!")
