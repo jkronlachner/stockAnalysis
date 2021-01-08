@@ -29,12 +29,11 @@ function createWindow() {
         width: 1200,
         height: 920,
         movable: true,
-        titleBarStyle: 'hidden',
+        titleBarStyle: 'hiddenInset',
         title: "Stock Analysis",
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true
-
         }
     });
 

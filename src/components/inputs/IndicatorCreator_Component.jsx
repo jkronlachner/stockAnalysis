@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import {Basechart} from "../../objects/project";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import {IndicatorTemplate} from "../../objects/enums/indicatorTemplate";
 
 const _ = require("lodash");
 
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 type IndicatorCreatorProps = {
-    indicatorTypes: Array<any>,
+    indicatorTypes: IndicatorTemplate[],
     createCallback: Function,
     selectedBasechart: Basechart
 };
@@ -84,7 +85,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
     }
     function handleChange(e) {
         const indicatorId = e.target.value;
-        setSelectedIndicator(props.indicatorTypes.find(value => value.id === indicatorId))
+        setSelectedIndicator(props.indicatorTypes.find(value => value.name === indicatorId))
     }
     function getAutocompleteName(x) {
         switch(x){
@@ -132,15 +133,15 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
         <div className={classes.indicatorDefinitions}>
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <TextField_Component onChange={handleChange} selectItems={props.indicatorTypes.map(value => {
-                        return <MenuItem key={value.id} value={value.id}>
+                    <TextField_Component onChange={handleChange} selectItems={props.indicatorTypes.map((value: IndicatorTemplate) => {
+                        return <MenuItem key={value.name} value={value.name}>
                             {value.name}
                         </MenuItem>
                     })} fullWidth label={"Indikator"}/>
                 </Grid>
                 <Grid item xs={12}>
                     {selectedIndicator ?
-                        selectedIndicator.grouped ?
+                        selectedIndicator.basechart.includes("grouped") ?
                             renderGroupedAutocomplete() :
                             renderAutocomplete(selectedColumn[0], (value) => setSelectedColumn([value]), "Ausgewählte Spalte")
                         : <div/>}
@@ -150,8 +151,8 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
                 {selectedIndicator ? selectedIndicator.parameters.map(value => {
                     refs[value.name] = (createRef())
                     return <Grid xs={3} item>
-                        <TextField_Component ref={element => refs[value.name] = element} placeholder={value.value}
-                                             label={value.name} type={value.textfieldType}/>
+                        <TextField_Component ref={element => refs[value.name] = element} placeholder={value.name}
+                                             label={value.description} type={value.textfieldType}/>
                     </Grid>
                 }) : <div/>}
             </Grid>

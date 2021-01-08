@@ -3,14 +3,15 @@ import {makeStyles} from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import {TextField_Component} from "../inputs/TextField_Component";
 import Fab from "@material-ui/core/Fab";
-import {AddRounded} from "@material-ui/icons";
+import {AddRounded, DeleteRounded} from "@material-ui/icons";
 import {CustomTable_Component} from "../dataDisplay/Table_Component";
-import {AddIndicatorDialog_Component} from "../dialogs/AddIndicatorDialog_Component";
+import AddIndicatorDialog_Component from "../dialogs/AddIndicatorDialog_Component";
 import {useDispatch} from "react-redux";
 import {addIndicator, removeBasechart, removeIndicator} from "../../redux/actions/project_actions";
 import {useAlert} from "react-alert";
 import {Indicator} from "../../objects/project";
 import {generateIndicator} from "../../service/backendServices/IndicatorService";
+import {CircularProgress} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -92,7 +93,21 @@ export const IndicatorSettings_Component = ({project}) => {
                 </div>
             </Grid>
             <Grid item xs={12}>
-                <CustomTable_Component deletable={true} settings={{header: header, data: project.indicator ?? []}} onDelete={onDelete}/>
+                <CustomTable_Component actions={[
+                    {
+                        icon:
+                            <DeleteRounded
+                                fontSize={"large"}
+                                color={"primary"}
+                            />,
+                        onClick: (id) => onDelete(id)
+                    },
+                    {
+                        icon: <CircularProgress/>,
+                        onClick: () => {
+                        }
+                    }
+                ]} settings={{header: header, data: project.indicator ?? []}} onDelete={onDelete}/>
             </Grid>
         </Grid></>
 }

@@ -6,10 +6,14 @@ import {connect} from "react-redux";
 import {getAllProjects, getLoadingStatus} from "../../redux/selectors/selectors";
 import {LoadingStatus} from "../../objects/enums/loading.enum";
 import {Project} from "../../objects/project";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles((theme) => ({
     root: {padding: "40px"},
-
+    divider: {
+        margin: 10,
+        marginBottom: 40,
+    },
 }))
 
 
@@ -19,7 +23,8 @@ const History = ({projects, loading}) => {
 
     //mark: render
     return <div className={classes.root}>
-        <Typography variant={"subtitle2"}>Letzte Ergebnisse</Typography>
+        <Typography variant={"h1"}>Letzte Ergebnisse</Typography>
+        <Divider className={classes.divider}/>
         {loading.status === LoadingStatus.loading ? [0].map(() => <div>
             <Typography variant={"body1"}>Projects are loading from Database... (Drafts are saved offline)</Typography>
             <HistoryCell_Component project={new Project()}/>

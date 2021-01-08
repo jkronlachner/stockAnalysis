@@ -81,7 +81,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
         setStep(0);
         setBasecharts([]);
         setDoneButtonEnabled(false);
-    }, [])
+    }, [open])
     //</editor-fold>
 
 

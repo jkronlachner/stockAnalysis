@@ -30,7 +30,7 @@ const getIndicators = () => {
     }
 
     return new Promise((resolve, reject) =>
-        Axios.request(config).then(response => resolve(response)).catch(error => reject(error))
+        Axios.request(config).then(response => resolve(response.data)).catch(error => reject(error))
     )
 }
 

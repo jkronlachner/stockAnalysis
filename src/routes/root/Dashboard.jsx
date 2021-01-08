@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 import {getAllProjects, getLoadingStatus} from "../../redux/selectors/selectors";
 import {LoadingStatus} from "../../objects/enums/loading.enum";
 import Grid from "@material-ui/core/Grid";
+import Divider from "@material-ui/core/Divider";
 
 /*const chartData = [
     {
@@ -45,7 +46,10 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: "row",
         overflowX: "scroll",
         overflowY: "scroll",
-    }
+    },
+    topText: {
+        marginBottom: 40,
+    },
 }));
 const Dashboard = ({projects, loading}) => {
     //mark: hooks
@@ -82,7 +86,8 @@ const Dashboard = ({projects, loading}) => {
             <Chart_Component data={chartData} isLoading={loading.status === LoadingStatus.loading}/>
         </div>*/}
         <div className={classes.projects}>
-            <Typography variant={"subtitle2"}>Projects</Typography>
+            <Typography variant={"h1"} className={classes.topText}>Projects</Typography>
+
             <Grid container spacing={0} direction={"row"} wrap={"wrap"}>
                 {createProjectTabs()}
                 <Grid item>

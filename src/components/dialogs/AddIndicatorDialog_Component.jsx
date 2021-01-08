@@ -13,6 +13,8 @@ import {Indicator_Component} from "../dataDisplay/Indicator_Component";
 import Fab from "@material-ui/core/Fab";
 import {AddRounded} from "@material-ui/icons";
 import {Status} from "../../objects/enums/status.enum";
+import {connect} from "react-redux";
+import {IndicatorTemplate} from "../../objects/enums/indicatorTemplate";
 
 //<editor-fold desc="Overhead">
 const useStyles = makeStyles((theme) => ({
@@ -62,58 +64,15 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {padding: "80px 40px"},
 }));
-const indicatorTypes = [
-    {
-        id: 1,
-        name: "SMA",
-        grouped: false,
-        description: "Lorem ipsum dolor sit amet lorem ipsum dolor",
-        parameters: [
-            {
-                name: "Von",
-                textfieldType: "number",
-                value: "0",
-            },
-            {
-                name: "Bis",
-                textfieldType: "number",
-                value: "0",
-            },
-            {
-                name: "Schritt",
-                textfieldType: "number",
-                value: "0",
-            }
-        ]
-    },
-    {
-        id: 2,
-        grouped: true,
-        name: "GROUP",
-        description: "Group Indikator, Basischart muss 4 Spalten ausgewählt haben, OPN; HIGH; LOW; CLOSE",
-        parameters: [
-            {
-                name: "Von",
-                textfieldType: "number",
-                value: "0",
-            },
-            {
-                name: "Bis",
-                textfieldType: "number",
-                value: "0"
-            }
-        ]
-    }
-    ];
 type DialogProps = {
     open: boolean,
     setOpen: Function,
     project: Project,
     onDone: Function,
-
+    indicatorTypes: IndicatorTemplate[],
 };
 //</editor-fold>
-export const AddIndicatorDialog_Component = (props: DialogProps) => {
+const AddIndicatorDialog_Component = (props: DialogProps) => {
     //MARK: hooks & requires
     const _ = require("lodash");
     const classes = useStyles();
@@ -132,7 +91,9 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
         setIndicatorError(null);
         setDropdownError(null);
         setIndicators([]);
+        setBasechart(null);
     },[props.open])
+
 
     //<editor-fold desc="helpers">
     function handleCreateNew(index) {
@@ -262,11 +223,11 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
                      className={[classes.plus].join(" ")}><AddRounded/></Fab></span>}
             {
                 indicators.length === 0 ?
-                    <IndicatorCreator_Component selectedBasechart={selectedBasechart} indicatorTypes={indicatorTypes} createCallback={onCreate}/> :
+                    <IndicatorCreator_Component selectedBasechart={selectedBasechart} indicatorTypes={props.indicatorTypes} createCallback={onCreate}/> :
                     indicators.map((value, index) => {
                         if (value.building) {
                             return <IndicatorCreator_Component selectedBasechart={selectedBasechart}
-                                                               indicatorTypes={indicatorTypes}
+                                                               indicatorTypes={props.indicatorTypes}
                                                                createCallback={onCreate}/>
                         } else {
                             return <Indicator_Component indicator={value} onCreateNew={() => handleCreateNew(index + 1)}
@@ -282,3 +243,9 @@ export const AddIndicatorDialog_Component = (props: DialogProps) => {
     </Dialog>
     //</editor-fold>
 }
+const mapStateToProps = (state) => {
+    return {
+        indicatorTypes: state.indicators.filter((value: IndicatorTemplate) => value.basechart !== null)
+    }
+}
+export default connect(mapStateToProps)(AddIndicatorDialog_Component)

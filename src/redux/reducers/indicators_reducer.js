@@ -6,7 +6,7 @@ const _ = require("lodash");
 
 export const indicatorReducer = createReducer([], {
     ["ADD_NEW_INDICATOR_TEMPLATE"] : (state, action) => {
-        const {indicators} = action;
+        const {indicators} = action.payload;
         return indicators;
     }
 });

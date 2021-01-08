@@ -4,6 +4,7 @@ import {Area, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis}
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Typography from "@material-ui/core/Typography";
 import Skeleton from "react-loading-skeleton";
+import {useTheme} from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 export const Chart_Component = ({data, isLoading}) => {
     //MARK: Hooks
+    const theme = useTheme();
     const classes = useStyles();
 
     //MARK: Render

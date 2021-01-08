@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter as Router, Route, useHistory} from "react-router-dom";
+import {BrowserRouter as Router, Route, useHistory, Switch} from "react-router-dom";
 import {RootView} from "./routes/root/RootView";
 import PrivateRoute from "./service/ProtectedRoute";
 import {LogIn} from "./routes/user/LogIn";
@@ -12,23 +12,19 @@ import {checkUser} from "./service/backendServices/UserService";
 export default function RoutingIndex() {
     require("dotenv").config()
     const dispatch = useDispatch();
-    const history = useHistory();
 
     //GET INDICATORS FROM SERVER
     getIndicators().then((indicators: IndicatorTemplate[]) => {
         dispatch(replaceIndicators(indicators))
     })
 
-    checkUser().then((isUserLoggedIn: boolean) => {
-        if(!isUserLoggedIn){
-            history.replace("/login")
-        }
-    })
-    
     return <>
+
         <Router>
-            <Route path={"/login"}><LogIn/></Route>
-            <PrivateRoute path={"/"}><RootView/></PrivateRoute>
+            <Switch>
+                <Route path={"/login"}><LogIn/></Route>
+                <PrivateRoute path={"/"}><RootView/></PrivateRoute>
+            </Switch>
         </Router>
     </>
 }

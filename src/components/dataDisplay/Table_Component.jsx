@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {makeStyles} from "@material-ui/styles";
 import {LightTheme} from "../../themes/theme";
 import {DeleteRounded} from '@material-ui/icons'
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
 
 const theme = LightTheme;
 const useStyles = makeStyles((/*theme*/) => ({
@@ -45,9 +47,9 @@ const useStyles = makeStyles((/*theme*/) => ({
  * @param settings
  *          Settings for Table, structured like this:
  *          Headers:
- *              @param name: Headertitle to display 
+ *              @param name: Headertitle to display
  *              @param id: Data columnnime corresponding to Header, can be split with "."
-    *      Data:
+ *      Data:
  *              @param can be everything
  * @param deletable
  *          if rows are deletable
@@ -59,7 +61,7 @@ const useStyles = makeStyles((/*theme*/) => ({
  * @constructor
  */
 
-export const CustomTable_Component = ({settings, deletable, onDelete, onBlur}) => {
+export const CustomTable_Component = ({settings, deletable, onDelete, onBlur, actions}) => {
     //mark: hooks
     const classes = useStyles();
 
@@ -90,23 +92,16 @@ export const CustomTable_Component = ({settings, deletable, onDelete, onBlur}) =
                                 editable={false}
                             />
                         })}
-                        {
-                            deletable ?
-                                <span
-                                    style={{display: "flex",}}>
-                                        <DeleteRounded
-                                            onClick={() => {
-                                                onDelete(d._id)
-                                            }}
-                                            fontSize={"large"}
-                                            color={"primary"}
-                                            style={{
-                                                marginTop: 10,
-                                                marginLeft: 30
-                                            }}/>
-                                    </span>
-                                :
-                                <></>}
+                        <Grid container spacing={2} direction={"row"} wrap={"nowrap"}>
+                            {
+                                actions.map(x => {
+                                    return <Grid item>
+                                        <IconButton size={"medium"} onClick={() => x.onClick(d._id)}>{x.icon}</IconButton>
+                                    </Grid>
+                                })
+
+                            }
+                        </Grid>
                     </tr>
                     <tr key={"spacer"} className={classes.spacer}/>
                 </>);

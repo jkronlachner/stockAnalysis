@@ -5,7 +5,13 @@ import {Fab, useTheme} from "@material-ui/core";
 import {TextField_Component} from "../inputs/TextField_Component";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import {CloseRounded as CloseIcon, CloudUploadRounded, EditRounded} from "@material-ui/icons"
+import {
+    CloseRounded as CloseIcon,
+    CloudUploadRounded,
+    DeleteRounded,
+    EditRounded,
+    MultilineChartRounded
+} from "@material-ui/icons"
 import {CustomTable_Component} from "../dataDisplay/Table_Component";
 import {connect, useDispatch} from "react-redux";
 import {Basechart, Project} from "../../objects/project";
@@ -20,6 +26,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import {useDropzone} from "react-dropzone";
 import {useAlert} from "react-alert";
 import {hasIndicator} from "../../redux/selectors/selectors";
+import ChartPreviewDialog_Component from "../dialogs/ChartPreviewDialog_Component";
 
 const _ = require('lodash');
 
@@ -71,11 +78,18 @@ function BaseSettings_Component(props: Props) {
     const zieldatensatzPicker = useFilePicker();
     const dispatch = useDispatch();
     const alert = useAlert();
-    const {acceptedFiles, getRootProps, getInputProps} = useDropzone({accept: 'text/plain, application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
+    const {
+        acceptedFiles,
+        getRootProps,
+        getInputProps
+    } = useDropzone({accept: 'text/plain, application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
 
     //mark: states
     const [importDialogOpen, setImportDialogOpen] = useState(false);
     const [loading, setLoading] = useState(null);
+    const [chartPreviewDialog, setChartPreviewDialog] = useState({
+        basechartId: null, open: false
+    })
 
 
     //<editor-fold desc="lifecycle">
@@ -92,7 +106,10 @@ function BaseSettings_Component(props: Props) {
         }
         uploadTargetdataFile({
             file: zieldatensatzPicker.files[0],
-            setProgress: p => setLoading({...loading, '0': {name: "Zieldatensatz: " + zieldatensatzPicker.files[0].name, error: null, progress: p}})
+            setProgress: p => setLoading({
+                ...loading,
+                '0': {name: "Zieldatensatz: " + zieldatensatzPicker.files[0].name, error: null, progress: p}
+            })
         })
             .then(r => {
                 console.log("Uploaded!:", r)
@@ -109,13 +126,13 @@ function BaseSettings_Component(props: Props) {
 
     //<editor-fold desc="helpers">
     const onDelete = delete_id => {
-        if(hasIndicator(props.project, delete_id)){
+        if (hasIndicator(props.project, delete_id)) {
             alert.show("Du hast mit diesem Basischart bereits einen Indikator angelegt. Bitte entferne diesen zuerst.", {
                 title: "Achtung.",
                 closeCopy: "Okay",
                 actions: []
             })
-        }else{
+        } else {
             alert.show("Bist du sicher das du dieses Basischart löschen willst?", {
                 title: "Bestätigen.",
                 closeCopy: "Abbrechen",
@@ -238,9 +255,9 @@ function BaseSettings_Component(props: Props) {
     //</editor-fold>
 
 
-
 //mark: render
     return <div className={classes.root}>
+        <ChartPreviewDialog_Component basechartId={chartPreviewDialog.basechartId} open={chartPreviewDialog.open} setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
         <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
         <Grid container direction="row"
@@ -291,6 +308,30 @@ function BaseSettings_Component(props: Props) {
             <Grid item xs={12}>
                 <CustomTable_Component
                     onDelete={onDelete}
+                    actions={[
+                        {
+                            icon:
+                                <MultilineChartRounded
+                                    fontSize={"large"}
+                                    color={"primary"}
+                                />,
+                            onClick: (id) => {
+                                setChartPreviewDialog({
+                                    open: true,
+                                    basechartId: id
+                                })
+                            }
+                        },
+                        !props.detail ? {
+                            icon:
+                                <DeleteRounded
+                                    fontSize={"large"}
+                                    color={"primary"}
+                                    />,
+                            onClick: (id) => onDelete(id)
+                        } : {}
+
+                    ]}
                     deletable={true}
                     settings={{
                         header: header,

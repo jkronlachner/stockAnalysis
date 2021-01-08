@@ -57,7 +57,8 @@ export const RootView = () => {
     const history = useHistory();
 
     //mark: variables
-    const hideNav = location.pathname.includes("project")
+    const _ = require("lodash")
+    const hideNav = _.includes(location.pathname, "project") || _.includes(location.pathname, "detail")
 
 
     //<editor-fold desc="lifecycle">

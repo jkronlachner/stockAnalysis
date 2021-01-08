@@ -80,7 +80,8 @@
     "productName": "Stock Analysis",
     "copyright": "Copyright © 2020 ${author}",
     "mac": {
-      "category": "public.app-category.utilities"
+      "category": "public.app-category.utilities",
+      "icon": "./build/icon.png"
     },
     "files": [
       "build/**/*",

@@ -107,6 +107,13 @@ const permaRemoveProject = (projectId: String) => {
 }
 
 
+const getFile = (fileId: String) => {
+    const config = {
+        url: REQUEST_URL + `/project/file/${fileId}`,
+        method: "get"
+    }
+    return new Promise((resolve, reject) => Axios.request(config).then(result => resolve(result.data)).catch(error => reject(error)));
+}
 
 export {
     permaRemoveProject,
@@ -115,4 +122,5 @@ export {
     getSingleProject,
     uploadFile,
     createNewProject,
+    getFile,
 }

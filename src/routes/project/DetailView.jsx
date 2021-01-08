@@ -107,12 +107,9 @@ const DetailView = ({loading}) => {
     return <>{!project || loading.status === LoadingStatus.loading ?
         <LinearProgress variant={"query"} color={"primary"}/> :
         <div className={classes.root}>
-            <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
-                <IconButton onClick={() => history.goBack()}>
-                    <ArrowBack/>
-                </IconButton>
-                <Typography variant={"h2"}>Details: {project.projectTitle}</Typography>
-            </Box>
+
+            <Typography variant={"h1"}>Details: {project.projectTitle}</Typography>
+
             <SettingsCell_Component title={"Basisdaten"} subtitle={getSubtitleForBasedata()} disabled={!project}
                                     expandedView={<BaseSettings_Component detail={true} project={project}/>}
                                     expanded={expanded} handleChange={(title) => handleExpandedChange(title)}

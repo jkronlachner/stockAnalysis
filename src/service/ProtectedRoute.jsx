@@ -1,8 +1,18 @@
-import {Route, Redirect} from "react-router-dom";
+import {Route, Redirect, useHistory} from "react-router-dom";
 import React from "react";
 import {connect} from "react-redux";
+import {checkUser} from "./backendServices/UserService";
 
 function PrivateRoute({user, children, ...rest}){
+
+    const history = useHistory();
+
+    checkUser().then((isUserLoggedIn: boolean) => {
+        if(!isUserLoggedIn){
+            history.replace("/login")
+        }
+    })
+
     console.log(user);
     return (
         <Route
