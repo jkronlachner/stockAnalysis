@@ -5,12 +5,13 @@ const BrowserWindow = electron.BrowserWindow;
 const log = require('electron-log');
 
 
+
 const path = require("path");
 const isDev = require("electron-is-dev");
 const spawn = require("child_process").spawn;
 const {autoUpdater} = require("electron-updater");
 const url = require("url");
-const { dialog } = require("electron")
+const {dialog} = require("electron")
 
 let mainWindow;
 let child;
@@ -83,7 +84,7 @@ function showLoadingWindow() {
         }
     })
     loading.loadURL(url.format({
-        pathname: path.join(__dirname, isDev ? "../public/loading.html" : "../build/loading.html"),
+        pathname: path.resolve(__dirname, isDev ? '/output/loading.html' : '../../../output/loading.html'),
         protocol: "file:",
         slashes: true
     }));
@@ -120,7 +121,8 @@ app.on("ready", () => {
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
-    const jarPath = app.getAppPath() + (isDev ? '/public/veskur-core-backend.jar' : '/build/veskur-core-backend.jar')
+    const jarPath = path.resolve(__dirname, isDev ? '/output/veskur-core-backend.jar' : '../../../output/veskur-core-backend.jar')
+
     child = spawn('java', ['-jar', jarPath, '--spring.profiles.active=prod'])
     child.stdout.on('data', data => {
         log.info([data.toString()]);
@@ -137,7 +139,7 @@ app.on("ready", () => {
         log.error('child process exited with code ' + code);
         dialog.showMessageBox({
             title: "Fehler beim Starten der Applikation",
-            message: "Fehlercode: " + code,
+            message: "Fehlercode: " + code + "pfad: " + jarPath,
         });
         loading.close();
     })
@@ -160,16 +162,15 @@ app.on("before-quit", (e) => {
         title: 'Achtung',
         message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
     })
-    if(choice===0){
+    if (choice === 0) {
         e.preventDefault()
-    }else{
+    } else {
         console.log("Quitting backend!")
         const kill = require('tree-kill');
         kill(child.pid);
     }
 
 })
-
 
 
 app.on("activate", () => {

@@ -1,5 +1,6 @@
 {
   "name": "stock-analysis",
+  "description": "An easy way to check stocks and data for correlation",
   "version": "0.1.5",
   "private": true,
   "dependencies": {
@@ -44,7 +45,7 @@
     "electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-only": "electron .",
     "preelectron-pack": "npm run-script build",
-    "electron-pack": "electron-builder -mw"
+    "electron-pack": "electron-builder -m"
   },
   "eslintConfig": {
     "extends": [
@@ -81,16 +82,18 @@
     "copyright": "Copyright © 2020 ${author}",
     "mac": {
       "category": "public.app-category.utilities",
-      "icon": "./build/icon.png"
+      "icon": "./build/icon.icns"
     },
     "files": [
       "build/**/*",
-      "node_modules/**/*",
-      "utils/**/*",
       "db/**/*"
     ],
+    "extraFiles": [
+      "output/**/*"
+    ],
     "directories": {
-      "buildResources": "assets"
+      "output": "release",
+      "buildResources": "output"
     }
   }
 }
