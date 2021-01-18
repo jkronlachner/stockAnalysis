@@ -1,9 +1,10 @@
 // public/electron.js
+
 const electron = require("electron");
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const log = require('electron-log');
-
+const net = electron.net;
 
 
 const path = require("path");
@@ -12,6 +13,7 @@ const spawn = require("child_process").spawn;
 const {autoUpdater} = require("electron-updater");
 const url = require("url");
 const {dialog} = require("electron")
+
 
 let mainWindow;
 let child;
@@ -34,8 +36,10 @@ function createWindow() {
         title: "Stock Analysis",
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
-        }
+            enableRemoteModule: true,
+            devTools: false,
+        },
+
     });
 
     // Determine what to render based on environment
@@ -84,15 +88,41 @@ function showLoadingWindow() {
         }
     })
     loading.loadURL(url.format({
-        pathname: path.resolve(__dirname, isDev ? '/output/loading.html' : '../../../output/loading.html'),
+        pathname: path.resolve(__dirname, isDev ? '../output/loading.html' : '../../../output/loading.html'),
         protocol: "file:",
         slashes: true
     }));
     loading.show();
 }
 
+function startJavaBackend() {
+    log.info("Backend is not running... Starting!");
+    const jarPath = path.resolve(__dirname, isDev ? '../output' : '../../../output')
+
+    child = spawn('cd ' + jarPath + '&& java', ['-jar', 'veskur-core-backend.jar', '--spring.profiles.active=prod'], {shell: true})
+    child.noAsar = true;
+    child.stdout.on('data', data => {
+        log.info(data.toString());
+        if (data.toString().includes("Started")) {
+            createWindow();
+        }
+    })
+
+    child.stderr.on('data', function (data) {
+        log.error('stderr: ' + data);
+    });
+
+    child.on('close', function (code) {
+        log.error('child process exited with code ' + code);
+        dialog.showMessageBox({
+            title: "Fehler beim Starten der Applikation",
+            message: "Fehlercode: " + code + "pfad: " + jarPath,
+        });
+        loading.close();
+    })
+}
 // On launch create app window
-app.on("ready", () => {
+app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
     const os = require("os");
     const platform = os.platform() + "_" + os.arch();
@@ -121,27 +151,20 @@ app.on("ready", () => {
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
-    const jarPath = path.resolve(__dirname, isDev ? '/output/veskur-core-backend.jar' : '../../../output/veskur-core-backend.jar')
-
-    child = spawn('java', ['-jar', jarPath, '--spring.profiles.active=prod'])
-    child.stdout.on('data', data => {
-        log.info([data.toString()]);
-        if (data.toString().includes("Started")) {
+    log.info("Checking if backend is running!");
+    const axios = require("axios")
+    axios.get("http://localhost:4321/actuator/health").then(value =>{
+        log.info("Got response: "+ value.data + value.data.status);
+        if(value.data.status === "UP"){
+            log.info("Backend is up! starting window");
             createWindow();
+        }else{
+            log.info("Backend is not up, starting...");
+            startJavaBackend();
         }
-    })
-
-    child.stderr.on('data', function (data) {
-        log.error('stderr: ' + data);
-    });
-
-    child.on('close', function (code) {
-        log.error('child process exited with code ' + code);
-        dialog.showMessageBox({
-            title: "Fehler beim Starten der Applikation",
-            message: "Fehlercode: " + code + "pfad: " + jarPath,
-        });
-        loading.close();
+    }).catch(e => {
+        log.error("Error in request", e)
+        startJavaBackend();
     })
     //END OF BACKEND CHECK
 });
@@ -155,7 +178,7 @@ app.on("window-all-closed", () => {
     }
 });
 
-app.on("before-quit", (e) => {
+app.on("before-quit", async (e) => {
     var choice = electron.dialog.showMessageBoxSync(mainWindow, {
         type: 'warning',
         buttons: ['Nein', 'Ja'],
@@ -165,9 +188,10 @@ app.on("before-quit", (e) => {
     if (choice === 0) {
         e.preventDefault()
     } else {
-        console.log("Quitting backend!")
-        const kill = require('tree-kill');
-        kill(child.pid);
+        log.info("Quitting backend");
+        const axios = require("axios")
+        axios.post("https://localhost:4321/actuator/shutdown").then(r => log.info("Shutted backend down!"))
+        log.info("Tried to quit backend via request!");
     }
 
 })

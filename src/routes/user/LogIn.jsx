@@ -1,6 +1,5 @@
 import React, {useRef, useState} from "react";
 import {makeStyles} from "@material-ui/styles";
-import splashImage from "../../assets/LogInSplash.svg";
 import {Button, Typography} from "@material-ui/core";
 import {TextField_Component} from "../../components/inputs/TextField_Component";
 import {signInUser, signUpUser} from "../../service/backendServices/BackendService";
@@ -117,7 +116,7 @@ export const LogIn = () => {
             </div>
         </div>
         <div className={classes.splash}>
-            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={splashImage}
+            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={require("../../assets/LogInSplash.svg")}
                  alt={"Splash Image"}/>
         </div>
     </div>
