@@ -146,6 +146,7 @@ app.on("ready", async () => {
             return;
         }
     })
+
     //END OF CHECK
 
     //Starting backend
