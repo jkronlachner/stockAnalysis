@@ -1,6 +1,20 @@
+@font-face {
+  font-family: "Biko", sans-serif;
+  src: local('Biko'), url("./fonts/Biko_Regular.otf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Biko", sans-serif;
+  src: local('Biko'), url("./fonts/Biko_Bold.otf");
+  font-weight: bold;
+}
+
+
+
 body {
   margin: 0;
-  font-family: -apple-system, "Biko";
+  font-family: -apple-system, "Biko", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #F7F7F7;

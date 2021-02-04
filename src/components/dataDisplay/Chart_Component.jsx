@@ -8,7 +8,7 @@ import {useTheme} from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    chartRoot: {
         backgroundColor: theme.palette.background.paper,
         boxShadow: "0px 0px 10px 1px " + theme.palette.shadowColor.main,
         borderRadius: 10,
@@ -43,7 +43,7 @@ export const Chart_Component = ({data, isLoading}) => {
     const classes = useStyles();
 
     //MARK: Render
-    return <div className={classes.root}>
+    return <div className={classes.chartRoot}>
         <div className={classes.chart}>
             <ResponsiveContainer height={250} width="100%">
                 {isLoading ? <Skeleton/> : <AreaChart data={data}

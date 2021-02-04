@@ -8,7 +8,7 @@ import TextField from "@material-ui/core/TextField";
 
 const theme = LightTheme;
 const useStyles = makeStyles((/*theme*/) => ({
-    root: {
+    textfieldRoot: {
         display: "flex",
         flexDirection: "column",
         flexGrow: 1,
@@ -90,7 +90,7 @@ export const  TextField_Component = forwardRef((props: FieldProps, ref) => {
 
     //This is used for some functionality that differs from the one that the material ui one has.
     //mark: renders
-    return <div className={classes.root}>
+    return <div className={classes.textfieldRoot}>
         <Typography className={classes.label} variant={"caption"}>{props.label}</Typography>
         <CustomTextField
             value={props.value}

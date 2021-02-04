@@ -4,9 +4,9 @@ import {Button, Typography} from "@material-ui/core";
 import {TextField_Component} from "../../components/inputs/TextField_Component";
 import {signInUser, signUpUser} from "../../service/backendServices/BackendService";
 import {useHistory} from "react-router-dom";
-
+import image from "../../assets/LogInSplash.svg";
 const useStyles = makeStyles((theme) => ({
-    root: {
+    loginRoot: {
         display: "flex",
         flexDirection: "row",
 
@@ -87,7 +87,7 @@ export const LogIn = () => {
     //</editor-fold>
 
     //mark: render
-    return <div className={classes.root}>
+    return <div className={classes.loginRoot}>
         <div className={classes.leftSideContainer}>
             <Typography variant={"h1"}>{isLogin ? "Sign in." : "Sign up."}</Typography>
             <Typography variant={"caption"}>Wir brauchen ein paar Daten von dir um einen Account erstellen zu
@@ -116,7 +116,7 @@ export const LogIn = () => {
             </div>
         </div>
         <div className={classes.splash}>
-            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={require("../../assets/LogInSplash.svg")}
+            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={image}
                  alt={"Splash Image"}/>
         </div>
     </div>

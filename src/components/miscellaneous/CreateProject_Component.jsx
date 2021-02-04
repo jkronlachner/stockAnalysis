@@ -10,7 +10,7 @@ import {useDispatch} from "react-redux";
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    createProjectCellRoot: {
         margin: 20,
         backgroundColor: "white",
         height: 250,
@@ -55,7 +55,7 @@ export const CreateProject_Component = () => {
     //</editor-fold>
 
     //mark: render
-    return <ButtonBase className={classes.root} onClick={createProject}>
+    return <ButtonBase className={classes.createProjectCellRoot} onClick={createProject}>
         <div className={classes.flexBox}>
             <AddRounded className={classes.add}/>
             <Typography className={classes.title} variant={"h2"}>Neues Projekt anlegen</Typography>

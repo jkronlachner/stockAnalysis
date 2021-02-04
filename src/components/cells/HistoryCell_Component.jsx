@@ -14,7 +14,7 @@ import {useAlert} from "react-alert";
 import {permaRemoveProject} from "../../service/backendServices/ProjectService";
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    containerRoot: {
         backgroundColor: theme.palette.background.default,
         borderColor: "red",
         width: "calc(100% - 20px)",
@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme) => ({
         width: 17,
         height: 90,
         alignItems: "end",
-        marginLeft: "auto",
-        borderRadius: "0 10px 10px 0",
+        marginLeft: "10px",
+        borderRadius: "10px",
     },
     information: {
         marginLeft: "auto"
@@ -99,21 +99,7 @@ export const HistoryCell_Component = ({project, duration}) => {
 
     //MARK: RENDERS
     return (
-        <div className={classes.root}>
-            <div>
-                <IconButton color={"primary"} onClick={() => {
-                    alert.show("Bist du sicher das du dieses Projekt löschen willst?", {
-                        title: "Bestätigen.",
-                        closeCopy: "Abbrechen",
-                        actions: [{
-                            copy: "Löschen",
-                            onClick: () => removeProject(),
-                        }]
-                    })
-                }}>
-                    <DeleteIcon fontSize={"large"}/>
-                </IconButton>
-            </div>
+        <div className={classes.containerRoot}>
             <ButtonBase style={{flexGrow: 1}} onClick={proceedToProject}>
                 <Typography variant={"h2"}>{project.projectTitle ||
                 <Skeleton width={200} height={50}/>}</Typography>
@@ -127,8 +113,22 @@ export const HistoryCell_Component = ({project, duration}) => {
                     <Typography variant={"body1"}>{duration && project.status !== Status.draft ?
                         <Skeleton width={100} height={30}/> : duration ?? ""}</Typography>
                 </div>
+                <div style={{marginLeft: "auto"}}>
 
+                </div>
                 <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
             </ButtonBase>
+            <IconButton color={"primary"} onClick={() => {
+                alert.show("Bist du sicher das du dieses Projekt löschen willst?", {
+                    title: "Bestätigen.",
+                    closeCopy: "Abbrechen",
+                    actions: [{
+                        copy: "Löschen",
+                        onClick: () => removeProject(),
+                    }]
+                })
+            }}>
+                <DeleteIcon fontSize={"large"}/>
+            </IconButton>
         </div>)
 }

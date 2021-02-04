@@ -6,16 +6,16 @@ const _ = require("lodash");
 
 export const projectsReducer = createReducer(null, {
     ["CREATE"]: (state, action) => {
-        const projectId : string = action.payload.projectId;
+        const projectId: string = action.payload.projectId;
         let project = new Project();
         project.creationTimestamp = new Date();
         project.status = Status.draft;
         project.projectId = projectId;
-        const draftNumber = Object.values(state ?? []).filter((p) => p.projectTitle !== "New Draft").length +1
+        const draftNumber = Object.values(state ?? []).filter((p) => p.projectTitle !== "New Draft").length + 1
         project.projectTitle = "New Draft " + draftNumber;
         return {
             ...state,
-            [projectId] : {
+            [projectId]: {
                 project: project,
                 created: new Date().toISOString(),
             }
@@ -25,13 +25,13 @@ export const projectsReducer = createReducer(null, {
         const projectId: string = action.payload.projectId;
         const rowToModify: string = action.payload.rowToModify;
         const data: any = action.payload.data;
-        if(rowToModify == null || projectId == null || data == null){
+        if (rowToModify == null || projectId == null || data == null) {
             return state;
         }
         return {
             ...state,
-            [projectId] : {
-                project: Object.assign({}, state[projectId].project, {[rowToModify] : data}),
+            [projectId]: {
+                project: Object.assign({}, state[projectId].project, {[rowToModify]: data}),
                 modified: new Date().toISOString()
             }
         };
@@ -45,7 +45,7 @@ export const projectsReducer = createReducer(null, {
         }
     },
     ["DATABASE_ADD"]: (state, action) => {
-        return{
+        return {
             ...state,
             ...action.payload.projects
         }
@@ -62,36 +62,36 @@ export const projectsReducer = createReducer(null, {
                 modified: new Date().toISOString()
             }
         }
-        
+
     },
     ["ADD_BASECHART"]: (state, action) => {
         let {project, basechart} = action.payload;
         project = _.cloneDeep(state[project.projectId].project);
         return {
             ...state,
-            [project.projectId] : {
+            [project.projectId]: {
                 project: Object.assign({}, project, {"basecharts": [...project.basecharts ?? [], basechart]}),
                 modified: new Date().toISOString()
             }
         }
     },
     ["MODIFY_BASECHART"]: (state, action) => {
-        let {project,basechart,column,newValue} = action.payload;
+        let {project, basechart, column, newValue} = action.payload;
         basechart = Object.assign({}, basechart);
         let basecharts = Array.from(project.basecharts);
-        if(column === "chartname"){
+        if (column === "chartname") {
             basechart.chartname = newValue;
-        }else if(column === "columns"){
+        } else if (column === "columns") {
             basechart.columns = newValue;
-        }else if(column === "nickname"){
+        } else if (column === "nickname") {
             basechart.nickname = newValue;
         }
         const basechartIndex = project.basecharts.findIndex(value => value._id === basechart._id);
         basecharts[basechartIndex] = basechart;
         return {
             ...state,
-            [project.projectId] : {
-                project:  Object.assign({}, project, {"basecharts": basecharts}),
+            [project.projectId]: {
+                project: Object.assign({}, project, {"basecharts": basecharts}),
                 modified: new Date().toISOString()
             }
         }
@@ -106,7 +106,7 @@ export const projectsReducer = createReducer(null, {
         projectContainer.indicator = indicators;
         return {
             ...state,
-            [projectId] : {project: projectContainer, modified: new Date().toISOString()}
+            [projectId]: {project: projectContainer, modified: new Date().toISOString()}
         }
     },
     ["REMOVE_INDICATOR"]: (state, action) => {
@@ -118,6 +118,14 @@ export const projectsReducer = createReducer(null, {
         return {
             ...state,
             [projectId]: {project: projectContainer, modified: new Date().toISOString()}
+        }
+    },
+    ["REMOVE_DRAFTS"]: (state, action) => {
+        var stateCopy = Object.assign({}, state);
+        _.omitBy(stateCopy, ((project: Project, key: String) => project.state = Status.draft))
+        const newState = Object.assign({}, stateCopy);
+        return {
+            ...newState
         }
     }
 });

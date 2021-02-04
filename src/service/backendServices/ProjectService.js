@@ -106,7 +106,6 @@ const permaRemoveProject = (projectId: String) => {
     )
 }
 
-
 const getFile = (fileId: String) => {
     const config = {
         url: REQUEST_URL + `/project/file/${fileId}`,
@@ -115,7 +114,16 @@ const getFile = (fileId: String) => {
     return new Promise((resolve, reject) => Axios.request(config).then(result => resolve(result.data)).catch(error => reject(error)));
 }
 
+const deleteTempFiles = () => {
+    const config = {
+        url: REQUEST_URL + `/project/cleanTemp`,
+        method: "DELETE",
+    };
+    return new Promise((resolve, reject) => Axios.request(config).then(result => resolve(result.data)).catch(error => reject(error)))
+}
+
 export {
+    deleteTempFiles,
     permaRemoveProject,
     uploadTargetdataFile,
     getAllProjects,

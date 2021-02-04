@@ -8,7 +8,7 @@ import {Settings} from "@material-ui/icons";
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    sideNavRoot: {
         height: "100%",
         color: "white",
         marginTop: "15vh",
@@ -134,7 +134,7 @@ const SideNavigationBar_Component = ({showNavigationBar: hideNavigationBar}) => 
 
     //mark: renders
     return (
-        <div className={classes.root}>
+        <div className={classes.sideNavRoot}>
             <nav className={classes.nav}>
                 <div className={classes.wrapper}>
                     {items.map((item) => {

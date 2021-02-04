@@ -62,7 +62,9 @@ export const IndicatorSettings_Component = ({project}) => {
         dispatch(addIndicator(indicator, project.projectId));
         generateIndicator(project, indicator.definition, indicator.basechart._id).then(r =>
             console.log(r)
-        ).catch(e => console.log(e))
+        ).catch(e => {
+            console.error(e);
+        })
     }
 
     //</editor-fold>
@@ -75,16 +77,7 @@ export const IndicatorSettings_Component = ({project}) => {
               alignItems="center"
               container
               spacing={2}>
-            <Grid item xs={8}>
-                <TextField_Component fullWidth
-                                     disabled
-                                     notWhite={true}
-                                     label={"Bereits erstellten Indikator hinzufügen"}
-                                     placeholder={"Indikatorenkombinationsname …"}
-                />
-
-            </Grid>
-            <Grid item xs={4} display={"flex"} flexdirection={"row"}>
+            <Grid item xs={12} display={"flex"} flexdirection={"row"}>
                 <div className={classes.createButton}>
                     <Fab style={{marginRight: 20}} color={"primary"} onClick={() => setDialogOpen(!dialogOpen)}>
                         <AddRounded fontSize={"large"}/>

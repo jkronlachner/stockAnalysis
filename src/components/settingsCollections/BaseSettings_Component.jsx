@@ -45,8 +45,14 @@ const header = [
         id: "columns"
     }
 ];
+const targetDataHeader = [
+    {
+        name: "Name",
+        id: "filename",
+    }
+]
 const useStyles = makeStyles((theme) => ({
-    root: {padding: 20},
+    baseSettingsRoot: {padding: 20},
     zieldatensatzUpload: {
         display: "flex",
         flexDirection: "column",
@@ -75,14 +81,14 @@ function BaseSettings_Component(props: Props) {
     //mark: hooks
     const classes = useStyles();
     const theme = useTheme();
-    const zieldatensatzPicker = useFilePicker();
     const dispatch = useDispatch();
     const alert = useAlert();
     const {
         acceptedFiles,
         getRootProps,
         getInputProps
-    } = useDropzone({accept: 'text/plain, application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
+    } = useDropzone({accept: 'application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
+    const targetDataDropzone = useDropzone({accept: 'application/vnd.ms-excel, text/csv, text/x-csv', multiple: false})
 
     //mark: states
     const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -101,26 +107,26 @@ function BaseSettings_Component(props: Props) {
     }, [acceptedFiles])
 
     useEffect(() => {
-        if (zieldatensatzPicker.files.length === 0) {
+        if (targetDataDropzone.acceptedFiles.length === 0) {
             return;
         }
         uploadTargetdataFile({
-            file: zieldatensatzPicker.files[0],
+            file: targetDataDropzone.acceptedFiles[0],
             setProgress: p => setLoading({
                 ...loading,
-                '0': {name: "Zieldatensatz: " + zieldatensatzPicker.files[0].name, error: null, progress: p}
+                '0': {name: "Zieldatensatz: " + targetDataDropzone.acceptedFiles[0].name, error: null, progress: p}
             })
         })
             .then(r => {
                 console.log("Uploaded!:", r)
-                handleChange("zieldatensatz", {id: r, filename: zieldatensatzPicker.files[0].name})
+                handleChange("zieldatensatz", {id: r, filename: targetDataDropzone.acceptedFiles[0].name})
                 setLoading(_.omit(loading, '0'))
                 if (_.values(loading).length === 0) {
                     setLoading(null);
                 }
             })
             .catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
-    }, [zieldatensatzPicker.files])
+    }, [targetDataDropzone.acceptedFiles])
     //</editor-fold>
 
 
@@ -146,10 +152,6 @@ function BaseSettings_Component(props: Props) {
     }
     const handleChange = (caller: string, data) => {
         dispatch(modifyProject(props.project.projectId, caller, data))
-    }
-
-    function handleTableChange(newValue: string, row: Basechart, column: string) {
-        dispatch(modifyBasechart(props.project, row, column, newValue))
     }
 
     function timeSlotChanged(unit) {
@@ -200,6 +202,13 @@ function BaseSettings_Component(props: Props) {
         }
     }
 
+    function showAlert() {
+        alert.show("Der Zieldatensatz soll eine Datumsspalte enthalten und einen zusätzlichen Wert der entweder 0, 1 oder -1 sein kann. \n 0: Nichts tun. \n1: Kaufen.\n 2: Verkaufen", {
+            title: "Zieldatensatz",
+            closeCopy: "Okay",
+            actions: []
+        });
+    }
     //</editor-fold>
 
     //<editor-fold desc="render helpers">
@@ -243,32 +252,50 @@ function BaseSettings_Component(props: Props) {
 
     }
 
-    function renderDrop() {
+    function renderDrop(basedata: boolean) {
+        var rootProps;
+        var inputProps;
+        if (basedata) {
+            rootProps = getRootProps({className: 'dropzone'});
+            inputProps = getInputProps();
+        } else {
+            rootProps = targetDataDropzone.getRootProps({className: 'dropzone'});
+            inputProps = targetDataDropzone.getInputProps();
+        }
         return <section className="container">
-            <div {...getRootProps({className: 'dropzone'})}>
-                <input {...getInputProps()} />
-                <p>Ziehe deine Files hier hinein oder klicke um sie auszuwählen.</p>
+            <div {...rootProps}>
+                <input {...inputProps} />
+                {basedata ? <Typography variant={"body2"}>Ziehe deine Basisdaten hier hinein oder klicke um sie
+                        auszuwählen.</Typography> :
+                    <Typography variant={"body2"}>Ziehe deinen Zieldatensatz hier hinein oder klicke um ihn
+                        auszuwählen.</Typography>}
             </div>
         </section>;
     }
 
+
+
     //</editor-fold>
 
 
+
+
 //mark: render
-    return <div className={classes.root}>
-        <ChartPreviewDialog_Component basechartId={chartPreviewDialog.basechartId} open={chartPreviewDialog.open} setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
+    return <div className={classes.baseSettingsRoot}>
+        <ChartPreviewDialog_Component projectId={props.project.projectId} basechartId={chartPreviewDialog.basechartId}
+                                      open={chartPreviewDialog.open}
+                                      setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
         <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
         <Grid container direction="row"
               justify="center"
               alignItems="center"
-              spacing={2}
+              spacing={4}
         >
             <Grid item xs={12}>
                 {renderUploadProgress()}
             </Grid>
-            <Grid item xs={8}>
+            <Grid item xs={12}>
                 <TextField_Component defaultValue={props.project ? props.project.projectTitle : ""}
                                      onDone={(e) => handleChange("projectTitle", e.target.value)}
                                      fullWidth={true}
@@ -277,37 +304,13 @@ function BaseSettings_Component(props: Props) {
                                      placeholder={"Projektname..."}
                                      notWhite={true}/>
             </Grid>
-            <Grid item xs={4}>
-                <div className={classes.zieldatensatzUpload}>
-                    <Typography variant={"caption"}
-                                style={{marginBottom: 10}}>
-                        {props.project?.zieldatensatz ? "Zieldatensatz hochgeladen" : "Zieldatensatz hochladen..."}
-                    </Typography>
-                    {props.project?.zieldatensatz ?
-                        <div style={{display: "flex", flexDirection: "row"}}>
-                            <p>{props.project.zieldatensatz.filename}</p>
-                            <IconButton disabled={props.detail}
-                                        onClick={zieldatensatzPicker.onClick}><EditRounded/></IconButton>
-                        </div>
-                        :
-                        <Fab
-                            disabled={props.detail}
-                            onClick={zieldatensatzPicker.onClick}
-                            color={"primary"}
-                            variant={"extended"}
-                        >
-                            <CloudUploadRounded
-                                style={{marginRight: 20}}
-                            />
-                            Hochladen...
-                        </Fab>}
-                    <zieldatensatzPicker.HiddenFileInput accept={".csv"} multiple={false}/>
-                </div>
-            </Grid>
 
-            <Grid item xs={12}>
+            <Grid item xs={12} spacing={2}>
+                <Typography variant={"h2"}
+                            style={{marginBottom: 10}}>
+                    Basisdaten hochladen.
+                </Typography>
                 <CustomTable_Component
-                    onDelete={onDelete}
                     actions={[
                         {
                             icon:
@@ -327,7 +330,7 @@ function BaseSettings_Component(props: Props) {
                                 <DeleteRounded
                                     fontSize={"large"}
                                     color={"primary"}
-                                    />,
+                                />,
                             onClick: (id) => onDelete(id)
                         } : {}
 
@@ -339,7 +342,36 @@ function BaseSettings_Component(props: Props) {
                     }}/>
             </Grid>
             <Grid item xs={12}>
-                {renderDrop()}
+                {renderDrop(true)}
+            </Grid>
+            <Grid item xs={12}>
+                <Typography variant={"h2"}
+                            style={{marginBottom: 10}}>
+                    {"Zieldatensatz hochladen."}
+                </Typography>
+                <Typography variant={"body2"} style={{textDecoration: "underline"}} onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
+
+                {props.project.zieldatensatz ? <CustomTable_Component
+                    actions={[
+                        {
+                            icon:
+                                <EditRounded
+                                    fontSize={"large"}
+                                    color={"primary"}
+                                />,
+                            onClick: (id) => {
+                                targetDataDropzone.open();
+                            }
+                        }]}
+                    settings={{
+                        header: targetDataHeader,
+                        data: [{
+                            _id: props.project.zieldatensatz.filename,
+                            filename: props.project.zieldatensatz.filename
+                        }]
+                    }}
+                /> : <></>}
+                {renderDrop(false)}
             </Grid>
             <Grid item xs={12}>
                 <TimeInput_Component readOnly={props.detail} timeunit={props.project.timeunit}

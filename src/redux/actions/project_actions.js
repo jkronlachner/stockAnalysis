@@ -73,4 +73,8 @@ const addDatabaseProjects = createAction("DATABASE_ADD", function prepare(projec
         }
     }
 });
-export {createProject, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, addDatabaseProjects, removeIndicator, removeBasechart};
+
+const removeAllDrafts = createAction("REMOVE_DRAFTS", function prepare(){
+    return {}
+})
+export {createProject, removeAllDrafts, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, addDatabaseProjects, removeIndicator, removeBasechart};

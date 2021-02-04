@@ -16,7 +16,7 @@ import Box from "@material-ui/core/Box";
 import {ArrowBack} from "@material-ui/icons"
 
 const useStyles = makeStyles((theme) => ({
-    root: {padding: 20, overflow: "scroll"},
+    detailViewRoot: {padding: 20, overflow: "scroll"},
     bottomButton: {
         margin: 10,
         height: 60
@@ -106,7 +106,7 @@ const DetailView = ({loading}) => {
     //mark: render
     return <>{!project || loading.status === LoadingStatus.loading ?
         <LinearProgress variant={"query"} color={"primary"}/> :
-        <div className={classes.root}>
+        <div className={classes.detailViewRoot}>
 
             <Typography variant={"h1"}>Details: {project.projectTitle}</Typography>
 

@@ -13,7 +13,7 @@ const generateIndicator = (project: Project, indicatorString: String, basechartI
     var config = {
         method: 'POST',
         data: raw,
-        url: REQUEST_URL + "/indicator/generate/" + project.projectId
+        url: REQUEST_URL + "/indicator/generate/"
     };
 
     return new Promise((resolve, reject) =>

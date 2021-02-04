@@ -15,7 +15,7 @@ import DetailView from "../project/DetailView";
 
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    containerRoot: {
         paddingLeft: 40,
         paddingTop: 40,
         overflow: "hidden",
@@ -68,7 +68,7 @@ export const RootView = () => {
     //</editor-fold>
 
     //mark: render
-    return <div className={classes.root}>
+    return <div className={classes.containerRoot}>
         <div className={classes.topBar}>
             <Typography variant={"h1"}>Stock <span
                 style={{color: theme.palette.primary.main}}>Analysis</span></Typography>

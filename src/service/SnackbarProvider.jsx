@@ -7,7 +7,7 @@ import {getLoadingStatus} from "../redux/selectors/selectors";
 import {LoadingStatus} from "../objects/enums/loading.enum";
 
 const useStyles = makeStyles((theme) => ({
-    root: {},
+    snackbarRoot: {},
 }));
 const SnackbarProvider = ({loading}) => {
     const classes = useStyles();
@@ -21,7 +21,7 @@ const SnackbarProvider = ({loading}) => {
         setOldStatus(loading.status);
     }, [loading])
 
-    return <div className={classes.root}>
+    return <div className={classes.snackbarRoot}>
         <Snackbar transitionDuration={500} onClose={setOpen} anchorOrigin={{vertical: "bottom", horizontal: "right"}} open={open} autoHideDuration={7000}>
             {loading.status === LoadingStatus.error ? <Alert severity="error">Deine Projekte konnten nicht von der Datenbank geladen werden... Bist du offline?</Alert> :  <Alert style={{}} severity="success">Deine Projekte wurden von der Datenbank geladen.</Alert>}
         </Snackbar>

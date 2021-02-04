@@ -5,9 +5,10 @@ import {AddRounded, CloseRounded} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
 import IconButton from "@material-ui/core/IconButton";
 import Grid from "@material-ui/core/Grid";
+import {Typography} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    indicatorRoot: {
         backgroundColor: theme.palette.background.default,
         borderRadius: 10,
         padding: "20px",
@@ -53,7 +54,8 @@ export const Indicator_Component = (props: Indicator_ComponentProps) => {
 
     //mark: render
     return <div>
-        <div className={classes.root} style={{zIndex: "1"}}>
+        <div className={classes.indicatorRoot} style={{zIndex: "1"}}>
+            <Typography variant={"h2"}>{props.indicator.indicatorReferenceName}</Typography>
             <Grid container spacing={1} direction="row">
                 <Grid item>
                     <TextField_Component readOnly defaultValue={props.indicator.indicatorType.name} label={"Indikatorname"}/>
@@ -72,6 +74,5 @@ export const Indicator_Component = (props: Indicator_ComponentProps) => {
             </Grid>
         </div>
         <div className={classes.line}/>
-        <Fab size={"small"} onClick={props.onCreateNew} color={"primary"} className={[classes.plus].join(" ")}><AddRounded/></Fab>
     </div>
 }

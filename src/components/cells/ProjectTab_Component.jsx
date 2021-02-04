@@ -8,7 +8,7 @@ import {useHistory} from "react-router-dom";
 import {Project} from "../../objects/project";
 
 const useStyles = makeStyles((theme) => ({
-    root: {
+    buttonRoot: {
         backgroundColor: "white",
         height: 250,
         margin: 20,
@@ -70,7 +70,7 @@ export const ProjectTab_Component = ({project, isLoading = false}) => {
         project = new Project();
     }
     return <>
-        <ButtonBase className={classes.root} onClick={() => proceedToProject()} key={project.projectId}>
+        <ButtonBase className={classes.buttonRoot} onClick={() => proceedToProject()} key={project.projectId}>
             <div className={classes.status} style={{backgroundColor: getStatusColor(project.status)}}/>
             <div className={classes.flexBox}>
                 <Typography className={classes.title} variant={"h2"}>{isLoading ?

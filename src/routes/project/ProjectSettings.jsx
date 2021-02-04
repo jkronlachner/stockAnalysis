@@ -18,7 +18,7 @@ import {deleteProject} from "../../redux/actions/project_actions";
 const _ = require("lodash");
 
 const useStyles = makeStyles((theme) => ({
-    root: {padding: 20, overflow: "scroll"},
+    projectSettingsRoot: {padding: 20, overflow: "scroll"},
     bottomButton: {
         margin: 10,
         height: 60
@@ -216,7 +216,7 @@ const ProjectSettings = ({loading}) => {
 
     //mark: render
     return <>{drawError()}{!project ? <LinearProgress color={"primary"}/> :
-        <div className={classes.root}>
+        <div className={classes.projectSettingsRoot}>
             {renderDialog()}
             {renderErrorDialog()}
             <SettingsCell_Component title={"Basisdaten"} subtitle={getSubtitleForBasedata()} disabled={!project}
@@ -226,11 +226,6 @@ const ProjectSettings = ({loading}) => {
             <SettingsCell_Component title={"Indikatoren"} subtitle={getSubtitleForIndicators()}
                                     disabled={!project || !project.basecharts}
                                     expandedView={<IndicatorSettings_Component project={project}/>}
-                                    expanded={expanded} handleChange={(title) => handleExpandedChange(title)}
-            />
-            <SettingsCell_Component title={"Regeln"} subtitle={getSubtitleForRules()}
-                                    expandedView={<h1>Es werden die Standartregeln verwendet. (BETA)</h1>}
-                                    disabled={!project || (project.indicator ?? []).length === 0}
                                     expanded={expanded} handleChange={(title) => handleExpandedChange(title)}
             />
             <SettingsCell_Component title={"Optionen"} subtitle={getSubtitleForOptions()} disabled={!project}

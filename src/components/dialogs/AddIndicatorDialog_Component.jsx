@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {makeStyles, useTheme} from "@material-ui/styles";
 import Dialog from "@material-ui/core/Dialog";
-import {Indicator, Project} from "../../objects/project";
+import {Basechart, Indicator, Project} from "../../objects/project";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import {TextField_Component} from "../inputs/TextField_Component";
@@ -92,7 +92,8 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
         setDropdownError(null);
         setIndicators([]);
         setBasechart(null);
-    },[props.open])
+    }, [props.open])
+
 
 
     //<editor-fold desc="helpers">
@@ -103,74 +104,69 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
         copyOfIndicators.splice(index, 0, {building: true,})
         setIndicators(copyOfIndicators);
     }
-
     function onCreate(indicator) {
         setIndicatorError(null);
         let copyOfIndicators = Array.from(indicators);
         const indexOfBuilder = copyOfIndicators.findIndex(value => value.building === true);
-        copyOfIndicators = _.remove(copyOfIndicators, (n) => n.building === false);
-        copyOfIndicators.length === 0 ? indicator._id = 1 : indicator._id = (_.last(copyOfIndicators)._id) + 1;
-        copyOfIndicators.splice(indexOfBuilder, 0, indicator);
+        if(!indicator){
+            _.pullAt(copyOfIndicators, [indexOfBuilder])
+        }else {
+            copyOfIndicators = _.remove(copyOfIndicators, (n) => n.building === false);
+            copyOfIndicators.length === 0 ? indicator._id = 1 : indicator._id = (_.last(copyOfIndicators)._id) + 1;
+            copyOfIndicators.splice(indexOfBuilder, 0, indicator);
+            //Add name of bottom indicator to be referenced.
+            setBasechart(Object.assign({}, selectedBasechart, {columns: [...selectedBasechart.columns, indicator.indicatorReferenceName]}))
+            console.log(selectedBasechart);
+        }
         setIndicators(copyOfIndicators);
     }
-
     function handleDelete(index) {
         let copyOfIndicators = Array.from(indicators);
         _.pullAt(copyOfIndicators, index);
         setIndicators(copyOfIndicators);
     }
-
     function handleCreateIndicator() {
         if (!selectedBasechart) {
             setDropdownError("Du hast noch kein Basischart ausgewählt.")
+            return;
         }
-        /*if (!indicatorTitle) {
-            setIndicatorTitleError("Du hast der Indikatorenkombination noch keinen Namen gegeben.")
-        }*/
         if (!indicators || indicators.filter(v => v.building === false).length === 0) {
             setIndicatorError("Noch keine Indikatoren konfiguriert.")
+            return;
         }
-        if (!indicatorError /*&& !indicatorTitleError*/ && !dropdownError) {
+        if (!indicatorError && !dropdownError) {
             createIndicatorString();
         }
     }
-
     function createIndicatorString() {
         let indicatorString = "";
         indicators.forEach(value => {
-            indicatorString += value.indicatorType.name + "(";
+            indicatorString += `${value.indicatorType.name}/${value.indicatorReferenceName}(`
         })
         indicatorString += "$BASECHART$()";
         indicators.reverse();
         indicators.forEach(value => {
             indicatorString += ")[" + value.parameters.map(v => v.value).join(",") + "]"
-            if(_.isArrayLike(value.selectedColumn)){
+            if (_.isArrayLike(value.selectedColumn)) {
                 indicatorString += "::" + value.selectedColumn.join("::")
-            }else{
+            } else {
                 indicatorString += "::" + value.selectedColumn
             }
         });
         let indicator = new Indicator(indicatorString, 0, selectedBasechart, Status.waiting);
         props.onDone(indicator);
     }
-
     function handleDropdownChange(event) {
         setDropdownError(null);
         setBasechart(props.project.basecharts.find(value => value.chartname === event.target.value));
     }
-
-    /*function handleTitleChange(event) {
-        setIndicatorTitleError(null);
-        setIndicatorTitle(event.target.value);
-    }*/
-
     //</editor-fold>
 
     //<editor-fold desc="render">
     return <Dialog
         BackdropProps={{style: {zIndex: "-3"}}}
         onBackdropClick={() => props.setOpen(false)}
-        classes={{paper: classes.paper, root: classes.root}}
+        classes={{paper: classes.paper, container: classes.root}}
         fullWidth
         open={props.open}
     >
@@ -180,19 +176,6 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
                 <span style={{color: theme.palette.primary.main}}> erstellen.</span>
             </Typography>
             <div className={classes.topDialog}>
-                {/*<div
-                    style={{marginRight: 20, flexGrow: 1}}
-                >
-                    <TextField_Component
-                        onChange={handleTitleChange}
-                        error={indicatorTitleError}
-                        helperText={indicatorTitleError}
-                        fullWidth
-                        notWhite
-                        label={"Indikatorenkombinationsname"}
-                        placeholder={"Indikatorenkombinationsname"}
-                    />
-                </div>*/}
                 <div
                     style={{marginRight: 20, flexGrow: 1}}
                 >
@@ -223,7 +206,8 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
                      className={[classes.plus].join(" ")}><AddRounded/></Fab></span>}
             {
                 indicators.length === 0 ?
-                    <IndicatorCreator_Component selectedBasechart={selectedBasechart} indicatorTypes={props.indicatorTypes} createCallback={onCreate}/> :
+                    <IndicatorCreator_Component selectedBasechart={selectedBasechart}
+                                                indicatorTypes={props.indicatorTypes} createCallback={onCreate} isFirstOne={true}/> :
                     indicators.map((value, index) => {
                         if (value.building) {
                             return <IndicatorCreator_Component selectedBasechart={selectedBasechart}

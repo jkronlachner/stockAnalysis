@@ -6,10 +6,13 @@ import {useDispatch, useSelector} from "react-redux";
 import Button from "@material-ui/core/Button";
 import {logOut} from "../../redux/actions/user_actions";
 import {useHistory} from 'react-router-dom'
+import {removeAllDrafts, removeBasechart} from "../../redux/actions/project_actions";
+import {deleteTempFiles} from "../../service/backendServices/ProjectService";
+import {useAlert} from "react-alert";
 const electron = window.require("electron");
 
 const useStyles = makeStyles((theme) => ({
-    root: {padding: 40},
+    settingsRoot: {padding: 40},
     divider: {
         margin: 10,
         marginBottom: 40,
@@ -52,6 +55,8 @@ export const Settings = () => {
     const user = useSelector(state => state.user);
     const dispatch = useDispatch();
     const history = useHistory();
+    const alert = useAlert();
+
 
 
     //<editor-fold desc="helpers">
@@ -60,20 +65,30 @@ export const Settings = () => {
         history.go(0);
     }
 
+    function deleteTempFolder(){
+        alert.show("Bist du sicher das du alle deine Drafts löschen möchtest?", {
+            title: "Temporäre Files löschen!",
+            closeCopy: "Abbrechen",
+            actions: [{
+                copy: "Löschen",
+                onClick: () => {
+                    dispatch(removeAllDrafts())
+                    deleteTempFiles().then(r => alert.show("Temporäre Files gelöscht!"));
+                }
+            }]
+        });
+    }
+
     //</editor-fold>
 
     //mark: render
-    console.log(electron);
-    return <div className={classes.root}>
+    return <div className={classes.settingsRoot}>
         <Typography variant={"h1"}>Globale Einstellungen</Typography>
-        <p>App Version: {electron.remote.app.getVersion()}</p>
+        {<p>App Version: {electron.remote.app.getVersion()}</p>}
         <Divider className={classes.divider}/>
-        <Typography className={classes.subtitle} variant={"subtitle2"}>Indikatoren</Typography>
-        <Typography variant={"body1"}>Indikatoren-Files werden lokal abgespeichert, hier kannst du sie löschen wenn du
-            mehr Speicherplatz brauchst.</Typography>
-
-        <Button className={classes.deleteButton}>Indikatoren löschen.</Button>
-
+        <Typography className={classes.subtitle} variant={"subtitle2"}>Temporäre Files</Typography>
+        <Typography variant={"body1"}>Lösche alle deine Temporäre Files. Deine Draft-Projekte werden dadurch auch gelöscht.</Typography>
+        <Button onClick={deleteTempFolder}  className={classes.deleteButton}>Indikatoren löschen.</Button>
         <Divider className={classes.divider}/>
         <Typography variant={"subtitle2"} className={classes.subtitle}>Benutzer</Typography>
         <Typography variant={"body1"}>Eingeloggter Nutzer: {user.mail ?? "..."}</Typography>

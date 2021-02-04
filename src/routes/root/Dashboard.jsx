@@ -38,7 +38,7 @@ import Divider from "@material-ui/core/Divider";
 
 ]*/
 const useStyles = makeStyles((theme) => ({
-    root: {padding: "40px"},
+    dashboardRoot: {padding: "40px"},
     lastStat: {},
     projects: {},
     projectsScrollContainer: {
@@ -80,7 +80,7 @@ const Dashboard = ({projects, loading}) => {
     //</editor-fold>
 
     //mark: render
-    return <div className={classes.root}>
+    return <div className={classes.dashboardRoot}>
         {/*<div className={classes.lastStat}>
             <Typography variant={"subtitle2"}>Letztes Ergebnis</Typography>
             <Chart_Component data={chartData} isLoading={loading.status === LoadingStatus.loading}/>

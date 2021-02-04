@@ -12,7 +12,7 @@ const isDev = require("electron-is-dev");
 const spawn = require("child_process").spawn;
 const {autoUpdater} = require("electron-updater");
 const url = require("url");
-const {dialog} = require("electron")
+const {dialog, Menu} = require("electron")
 
 
 let mainWindow;
@@ -37,10 +37,12 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
-            devTools: false,
+            devTools: true,
         },
 
     });
+    mainWindow.setMenuBarVisibility(false);
+    Menu.setApplicationMenu(false);
 
     // Determine what to render based on environment
     mainWindow.loadURL(

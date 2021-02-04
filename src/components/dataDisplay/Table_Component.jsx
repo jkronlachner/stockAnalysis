@@ -4,6 +4,7 @@ import {LightTheme} from "../../themes/theme";
 import {DeleteRounded} from '@material-ui/icons'
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
+const _ = require("lodash");
 
 const theme = LightTheme;
 const useStyles = makeStyles((/*theme*/) => ({
@@ -66,6 +67,21 @@ export const CustomTable_Component = ({settings, deletable, onDelete, onBlur, ac
     const classes = useStyles();
 
     //mark: render
+    if(!_.isArray(settings.data)){
+        settings.data = [settings.data];
+    }
+
+    function getValue(header, d) {
+        if(header.id.includes(".")){
+            if(!d[header.id.split(".")[0]]){
+                return "";
+            }
+            return d[header.id.split(".")[0]][header.id.split(".")[1]]
+        }else {
+            return d[header.id];
+        }
+    }
+
     return <>
         <table className={classes.table}>
             <thead>
@@ -80,14 +96,16 @@ export const CustomTable_Component = ({settings, deletable, onDelete, onBlur, ac
             </thead>
             <tbody>
             {settings.data.map(d => {
+                if(!d){return <></>}
                 return (<>
                     <tr key={d._id}>
                         {settings.header.map((header) => {
+                            if(!header){return <></>}
                             return <TableField
                                 data={d}
                                 onBlur={onBlur ? (value) => onBlur(value, d, header.id) : null}
                                 classes={classes}
-                                defaultValue={header.id.includes(".") ? d[header.id.split(".")[0]][header.id.split(".")[1]] : d[header.id]}
+                                defaultValue={getValue(header, d)}
                                 type={"text"}
                                 editable={false}
                             />

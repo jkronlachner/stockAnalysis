@@ -121,7 +121,6 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     }
 
     function handleNicknameChange(event) {
-        console.log("Nickname change", event.target.value);
         let copy = _.clone(basecharts);
         basecharts[step].nickname = event.target.value;
         setBasecharts(copy);
@@ -130,7 +129,6 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     function isDoneButtonDisabled() {
 
         setDoneButtonEnabled(_.every(basecharts, x => {
-            console.log("truth check for : ", x)
             if (x.grouped) {
                 return x.selectedRows.CLOSE && x.selectedRows.OPEN && x.selectedRows.HIGH && x.selectedRows.LOW;
             }
@@ -168,8 +166,6 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             options={basecharts[step].headers}
             value={multiple ? basecharts[step].selectedRows : basecharts[step].selectedRows[label]}
             onChange={(event, value, reason) => {
-                //TODO: Implement remove Reason
-                console.log("Autocomplete reason: ", reason, value);
                 let basechartsCopy = Array.from(basecharts)
                 if (multiple) {
                     basecharts[step].selectedRows = value;
@@ -207,7 +203,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     return <Dialog
         BackdropProps={{style: {zIndex: "-3"}}}
         onBackdropClick={() => setOpen(false)}
-        classes={{paper: classes.paper, root: {padding: "80px 40px"}}}
+        classes={{paper: classes.paper, container: {padding: "80px 40px"}}}
         fullWidth
         open={open}
         fullScreen
@@ -229,6 +225,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             {basecharts.length > 0 ? <Box display={"flex"} flexDirection={"column"}>
                 <div style={{marginTop: "2rem"}}>
                     <Typography variant={"subtitle2"}>Vorschau</Typography>
+                    <Typography variant={"caption"}>Falls die Datei keinen Header hat können die Spalten nicht mehr eindeutig identifiziert werden. Füge also bitte noch einen hinzu!</Typography>
                     {buildTable()}
                 </div>
                 <div style={{marginTop: "4rem"}}>
@@ -254,14 +251,13 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                 <Typography variant={"body1"}>Falls eines der Datein über 50MB hat kann das eine Weile dauern.</Typography>
             </div>}
         </DialogContent>
-        <MobileStepper
+        {basecharts.length > 1 ? <MobileStepper
             activeStep={step}
             backButton={<Button size={"small"} onClick={handleBack}>Back</Button>}
             nextButton={<Button size={"small"} onClick={handleNext}>Next</Button>}
             steps={(files ?? []).length}
             position={"static"}
             variant={"dots"}
-        />
-
+        />: <></>}
     </Dialog>
 }
