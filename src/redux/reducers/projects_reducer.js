@@ -45,10 +45,11 @@ export const projectsReducer = createReducer(null, {
         }
     },
     ["DATABASE_ADD"]: (state, action) => {
-        return {
+        const projects = {
             ...state,
             ...action.payload.projects
         }
+        return _.omitBy(projects, (v, k) => v.projectTitle)
     },
     ["REMOVE_BASECHART"]: (state, action) => {
         const {projectId, basechartId} = action.payload;

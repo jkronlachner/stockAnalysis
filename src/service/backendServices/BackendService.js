@@ -38,14 +38,17 @@ export const getProject = (projectId) => {
     return getSingleProject(projectId).then(contents => {
         console.log("Response: ", contents);
         let project = parseJSONToProject(JSON.parse(contents));
-        project = {
+        let p = {
             [project.projectId]: {
                 project: project,
                 created: new Date().toISOString(),
             }
         }
+        if(!p[project.projectId].project.projectTitle){
+            return;
+        }
         store.dispatch(loaded());
-        store.dispatch(addDatabaseProjects(project))
+        store.dispatch(addDatabaseProjects(p))
     }).catch(e => {
         console.error("Cought error:", e);
         store.dispatch(error(e.message))

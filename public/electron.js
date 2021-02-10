@@ -157,7 +157,6 @@ app.on("ready", async () => {
     log.info("Checking if backend is running!");
     const axios = require("axios")
     axios.get("http://localhost:4321/actuator/health").then(value =>{
-        log.info("Got response: "+ value.data + value.data.status);
         if(value.data.status === "UP"){
             log.info("Backend is up! starting window");
             createWindow();

@@ -53,6 +53,17 @@ const checkUser = () => {
     )
 }
 
+const changeStorageLocation = (storageLocation) => {
+    var config = {
+        method: 'put',
+        url: REQUEST_URL + '/file/changeStorageLocation',
+        body: storageLocation
+    }
+    return new Promise(((resolve, reject) =>
+        Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
+    ))
+}
+
 export {
-   signUp, signIn, checkUser
+   signUp, signIn, checkUser, changeStorageLocation
 }

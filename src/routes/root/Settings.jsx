@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {makeStyles} from "@material-ui/styles";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
@@ -9,6 +9,7 @@ import {useHistory} from 'react-router-dom'
 import {removeAllDrafts, removeBasechart} from "../../redux/actions/project_actions";
 import {deleteTempFiles} from "../../service/backendServices/ProjectService";
 import {useAlert} from "react-alert";
+import {changeStorageLocation} from "../../service/backendServices/UserService";
 const electron = window.require("electron");
 
 const useStyles = makeStyles((theme) => ({
@@ -49,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
+
 export const Settings = () => {
     //mark: hooks
     const classes = useStyles();
@@ -57,12 +60,31 @@ export const Settings = () => {
     const history = useHistory();
     const alert = useAlert();
 
+    //states
+    const [speicherOrt, setSpeicherOrt] = useState("");
+
 
 
     //<editor-fold desc="helpers">
     function logoutUser() {
         dispatch(logOut());
         history.go(0);
+    }
+
+    function openDirectoryChooser() {
+        let dialog = electron.remote.dialog;
+        let path = dialog.showOpenDialogSync({
+            properties: ['openDirectory']
+        })
+        changeStorageLocation(path).then(x => {
+            setSpeicherOrt(path)
+        }).catch((e) => {
+            alert.show("Fehler beim ändern des Speicherorts. " + e, {
+                title: "Fehler!",
+                closeCopy: "Okay :(",
+                actions: []
+            })
+        })
     }
 
     function deleteTempFolder(){
@@ -94,5 +116,10 @@ export const Settings = () => {
         <Typography variant={"body1"}>Eingeloggter Nutzer: {user.mail ?? "..."}</Typography>
         <Typography variant={"body2"}>Nutzer-Id: {user.userId}</Typography>
         <Button onClick={logoutUser} className={classes.deleteButton}>Nutzer ausloggen.</Button>
+        <Divider className={classes.divider}/>
+        <Typography variant={"subtitle2"} className={classes.subtitle}>Speicherort</Typography>
+        <Typography variant={"body1"}>Speicherort: {speicherOrt}</Typography>
+        <Typography variant={"body2"}>Wähle bitte einen leeren Ordner aus!</Typography>
+        <Button className={classes.deleteButton} onClick={openDirectoryChooser}>Ordner auswählen</Button>
     </div>
 }
