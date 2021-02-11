@@ -1,7 +1,7 @@
 //@flow
 import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/styles";
-import {Fab, useTheme} from "@material-ui/core";
+import {Button, Fab, useTheme} from "@material-ui/core";
 import {TextField_Component} from "../inputs/TextField_Component";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -10,7 +10,7 @@ import {
     CloudUploadRounded,
     DeleteRounded, EditAttributesRounded,
     EditRounded,
-    MultilineChartRounded
+    MultilineChartRounded, NoteAddRounded
 } from "@material-ui/icons"
 import {CustomTable_Component} from "../dataDisplay/Table_Component";
 import {connect, useDispatch} from "react-redux";
@@ -28,6 +28,7 @@ import {useAlert} from "react-alert";
 import {hasIndicator} from "../../redux/selectors/selectors";
 import ChartPreviewDialog_Component from "../dialogs/ChartPreviewDialog_Component";
 import {TargetDataEditor} from "../dialogs/TargetDataEditor";
+import {convertToFileAndUploadToServer} from "../../service/backendServices/TargetDataEditorService";
 
 const _ = require('lodash');
 
@@ -211,6 +212,16 @@ function BaseSettings_Component(props: Props) {
             actions: []
         });
     }
+    function fileGeneratedCallback(fileContents: String) {
+        convertToFileAndUploadToServer(fileContents, p => setLoading({
+            ...loading,
+            '0': {name: "Generating Zieldatensatz...", error: null, progress: p}
+        })).then(response => {
+            setLoading(_.omit(loading, '0'))
+            handleChange("zieldatensatz", {id: response.id, filename: response.filename})
+        }).catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
+    }
+
 
     //</editor-fold>
 
@@ -277,6 +288,7 @@ function BaseSettings_Component(props: Props) {
     }
 
 
+
     //</editor-fold>
 
 
@@ -287,7 +299,7 @@ function BaseSettings_Component(props: Props) {
                                       setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
         <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
-        <TargetDataEditor project={props.project} setOpen={setTargetDataOpen} open={targetDataOpen}/>
+        <TargetDataEditor project={props.project} setOpen={setTargetDataOpen} open={targetDataOpen} fileGeneratedCallback={fileGeneratedCallback}/>
 
         <Grid container direction="row"
               justify="center"
@@ -353,7 +365,7 @@ function BaseSettings_Component(props: Props) {
                 </Typography>
                 <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer"}}
                             onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
-
+                <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)} disabled={!props.project.basecharts || props.project.basecharts.length === 0}>Zieldatensatz generieren</Button>
                 {props.project.zieldatensatz ? <CustomTable_Component
                     actions={[
                         {
@@ -365,11 +377,6 @@ function BaseSettings_Component(props: Props) {
                             onClick: (id) => {
                                 targetDataDropzone.open();
                             }
-                        },
-                        {
-                            icon:
-                            <EditAttributesRounded fontSize={"large"} color={"primary"}/>,
-                            onClick: (id) => setTargetDataOpen(true)
                         }
                     ]}
                     settings={{

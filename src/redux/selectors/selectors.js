@@ -17,6 +17,9 @@ const getLoadingStatus = (state) => {
     }
 }
 const hasIndicator = (project: Project, basechartId: String) => {
+    if(!project.indicator){
+        return false
+    }
     return project.indicator.some(value => {
         return value.basechart._id === basechartId
     });
