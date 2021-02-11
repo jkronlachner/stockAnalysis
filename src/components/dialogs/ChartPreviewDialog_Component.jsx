@@ -45,7 +45,6 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen}) =
     }, [open])
     //</editor-fold>
 
-
     const transformData = (data) => {
         const Papa = require("papaparse");
         const papaConfig = {
@@ -75,6 +74,7 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen}) =
         }
         Papa.parse(data, papaConfig)
     }
+
 
     return <Dialog className={classes.dialogRoot} open={open} onClose={setOpen} fullScreen>
         <DialogTitle style={{paddingTop: 40}}>

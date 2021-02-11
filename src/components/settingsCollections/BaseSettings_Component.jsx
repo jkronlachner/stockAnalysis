@@ -8,7 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import {
     CloseRounded as CloseIcon,
     CloudUploadRounded,
-    DeleteRounded,
+    DeleteRounded, EditAttributesRounded,
     EditRounded,
     MultilineChartRounded
 } from "@material-ui/icons"
@@ -27,6 +27,7 @@ import {useDropzone} from "react-dropzone";
 import {useAlert} from "react-alert";
 import {hasIndicator} from "../../redux/selectors/selectors";
 import ChartPreviewDialog_Component from "../dialogs/ChartPreviewDialog_Component";
+import {TargetDataEditor} from "../dialogs/TargetDataEditor";
 
 const _ = require('lodash');
 
@@ -93,6 +94,7 @@ function BaseSettings_Component(props: Props) {
     //mark: states
     const [importDialogOpen, setImportDialogOpen] = useState(false);
     const [loading, setLoading] = useState(null);
+    const [targetDataOpen, setTargetDataOpen] = useState(false);
     const [chartPreviewDialog, setChartPreviewDialog] = useState({
         basechartId: null, open: false
     })
@@ -203,12 +205,13 @@ function BaseSettings_Component(props: Props) {
     }
 
     function showAlert() {
-        alert.show("Der Zieldatensatz soll eine Datumsspalte enthalten und einen zusätzlichen Wert der entweder 0, 1 oder -1 sein kann. \n 0: Nichts tun. \n1: Kaufen.\n 2: Verkaufen", {
-            title: "Zieldatensatz",
+        alert.show("0: Nichts tun. 1: Kaufen. 0.5: Verkaufen", {
+            title: "Der Zieldatensatz soll eine Datumsspalte enthalten und einen zusätzlichen Wert der entweder 0, 0.5 oder 1 sein kann.",
             closeCopy: "Okay",
             actions: []
         });
     }
+
     //</editor-fold>
 
     //<editor-fold desc="render helpers">
@@ -274,10 +277,7 @@ function BaseSettings_Component(props: Props) {
     }
 
 
-
     //</editor-fold>
-
-
 
 
 //mark: render
@@ -287,6 +287,8 @@ function BaseSettings_Component(props: Props) {
                                       setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
         <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
+        <TargetDataEditor project={props.project} setOpen={setTargetDataOpen} open={targetDataOpen}/>
+
         <Grid container direction="row"
               justify="center"
               alignItems="center"
@@ -349,7 +351,8 @@ function BaseSettings_Component(props: Props) {
                             style={{marginBottom: 10}}>
                     {"Zieldatensatz hochladen."}
                 </Typography>
-                <Typography variant={"body2"} style={{textDecoration: "underline"}} onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
+                <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer"}}
+                            onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
 
                 {props.project.zieldatensatz ? <CustomTable_Component
                     actions={[
@@ -362,7 +365,13 @@ function BaseSettings_Component(props: Props) {
                             onClick: (id) => {
                                 targetDataDropzone.open();
                             }
-                        }]}
+                        },
+                        {
+                            icon:
+                            <EditAttributesRounded fontSize={"large"} color={"primary"}/>,
+                            onClick: (id) => setTargetDataOpen(true)
+                        }
+                    ]}
                     settings={{
                         header: targetDataHeader,
                         data: [{
