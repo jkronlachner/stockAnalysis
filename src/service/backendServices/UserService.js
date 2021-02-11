@@ -54,10 +54,18 @@ const checkUser = () => {
 }
 
 const changeStorageLocation = (storageLocation) => {
+    var FormData = require('form-data');
+    var data = new FormData();
+    data.append('newPath', storageLocation);
+
+
     var config = {
         method: 'put',
         url: REQUEST_URL + '/file/changeStorageLocation',
-        body: storageLocation
+        headers: {
+            ...data.headers
+        },
+        data : data
     }
     return new Promise(((resolve, reject) =>
         Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
