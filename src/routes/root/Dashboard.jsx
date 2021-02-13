@@ -8,6 +8,7 @@ import {getAllProjects, getLoadingStatus} from "../../redux/selectors/selectors"
 import {LoadingStatus} from "../../objects/enums/loading.enum";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import {Paper} from "@material-ui/core";
 
 /*const chartData = [
     {

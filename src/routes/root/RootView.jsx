@@ -23,9 +23,10 @@ const useStyles = makeStyles((theme) => ({
         height: "calc(100vh - 40px)",
         display: "flex",
         flexDirection: "column",
+        background: theme.palette.background.default
 
     }, container: {
-        backgroundColor: "#FCFCFC",
+        backgroundColor: theme.palette.background.paper,
         borderRadius: "10px 0 0 0",
         flexGrow: 1,
         width: "calc(100% - 40px - 212.8px)",

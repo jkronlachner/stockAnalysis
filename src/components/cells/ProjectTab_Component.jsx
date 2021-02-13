@@ -9,7 +9,7 @@ import {Project} from "../../objects/project";
 
 const useStyles = makeStyles((theme) => ({
     buttonRoot: {
-        backgroundColor: "white",
+        backgroundColor: theme.palette.background.default,
         height: 250,
         margin: 20,
         width: 250,
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: "0px 0px 10px 1px " + theme.palette.shadowColor.main,
         borderRadius: "20px",
         "&:hover": {
-            boxShadow: "0px 0px 20px 1px " + theme.palette.shadowColor.main,
+            boxShadow: "0px 0px 50px 1px " + theme.palette.shadowColor.dark,
         }
     },
     status: {

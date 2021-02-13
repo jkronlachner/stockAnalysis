@@ -36,7 +36,7 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
 
     //Selectors
     let indicator: Indicator;
-    if (indicatorId) indicator = store.projects[projectId].project.indicator.find(i => i._id === parseInt(indicatorId));
+    if (indicatorId && projectId) indicator = store.projects[projectId].project.indicator?.find(i => i._id === parseInt(indicatorId));
 
 
     //<editor-fold desc="Lifecycle">
@@ -186,7 +186,6 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
     }
 
     function renderChooserOrGraph() {
-        console.log(basechartId, indicatorId, data.length)
         if(indicatorId && data.length !== 0){
             return renderBasechartGraph();
         }

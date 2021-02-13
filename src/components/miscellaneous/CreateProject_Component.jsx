@@ -12,7 +12,7 @@ import {useDispatch} from "react-redux";
 const useStyles = makeStyles((theme) => ({
     createProjectCellRoot: {
         margin: 20,
-        backgroundColor: "white",
+        backgroundColor: theme.palette.background.default,
         height: 250,
         width: 250,
         flexShrink: 0,
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: "0px 0px 20px 1px " + theme.palette.shadowColor.main,
         borderRadius: "20px",
         "&:hover":{
-            boxShadow: "0px 0px 20px 5px " + theme.palette.shadowColor.main,
+            boxShadow: "0px 0px 50px 1px " + theme.palette.shadowColor.dark,
         }
     },
     flexBox: {

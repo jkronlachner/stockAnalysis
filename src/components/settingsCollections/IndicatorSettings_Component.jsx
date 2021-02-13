@@ -44,7 +44,7 @@ export const IndicatorSettings_Component = ({project}) => {
     const alert = useAlert();
     //mark: state
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedIndicatorId, setSelectedIndicatorId] = useState("1");
+    const [selectedIndicatorId, setSelectedIndicatorId] = useState(null);
 
     //<editor-fold desc="helpers">
     const onDelete = delete_id => {

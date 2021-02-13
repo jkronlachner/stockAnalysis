@@ -17,11 +17,8 @@ body {
   font-family: -apple-system, "Biko", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F7F7F7;
 }
-html {
-  background-color: #F7F7F7;
-}
+
 *{
   -ms-overflow-style: none;
 }

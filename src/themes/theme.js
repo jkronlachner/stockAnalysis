@@ -74,4 +74,76 @@ export const LightTheme = createMuiTheme({
         padding: 20,
     },
 })
-export const DarkTheme = createMuiTheme({});
+const FONT_DARK_DARK = "#ffffff";
+const FONT_LIGHT_DARK = "#ffffff";
+export const DarkTheme = createMuiTheme({
+    palette: {
+        primary: {
+            main: PRIMARY
+        },
+        shadowColor: {main: "#222222", dark: PRIMARY},
+        secondary: {
+            main: "#3791CB",
+            dark: "#1D3557",
+        },
+        background: {
+            paper: "#1c1c1c",
+            default: "#242424",
+        },
+        text: {
+            primary: FONT_LIGHT_DARK,
+            secondary: FONT_DARK_DARK
+        },
+
+    },
+    typography: {
+        fontFamily: 'Biko, sans-serif',
+        h1:{
+            fontSize: 35,
+            fontWeight: "bold",
+            color: FONT_DARK_DARK,
+        },
+        h2: {
+            fontSize: 20,
+            fontWeight: "bold",
+            color: FONT_DARK_DARK,
+        },
+        h3: {
+            fontSize: 73,
+            fontWeight: "bold",
+            color: PRIMARY
+        },
+        body1: {
+            fontSize: 18,
+            fontWeight: "normal",
+            color: FONT_LIGHT_DARK,
+        },
+        body2: {
+            fontSize: 13,
+            fontWeight: "normal",
+            color: FONT_LIGHT_DARK,
+        },
+        caption: {
+            fontWeight: "bold",
+            fontSize: 12,
+            color: PRIMARY,
+        },
+        button: {
+            textTransform: 'none'
+        },
+        subtitle1: {
+            fontSize: 30,
+            fontWeight: "bold",
+            color: PRIMARY
+        },
+        subtitle2: {
+            fontSize: 20,
+            fontWeight: "bold",
+            color: PRIMARY
+        }
+    },
+    shape: {
+        borderRadius: 10,
+        padding: 20,
+    },
+})

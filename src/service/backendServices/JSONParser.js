@@ -89,6 +89,7 @@ export function parseProjectToProjectDTO(project: Project) {
     const referenceCharts = project.basecharts.map(x => x._id);
     const indicators = project.indicator.map(x =>{ return {
         indicatorFunction: x.definition,
+        filePaths: x.paths,
         timeUnit: project.timeunit,
         referenceChartId: x.basechart._id,
     }})
