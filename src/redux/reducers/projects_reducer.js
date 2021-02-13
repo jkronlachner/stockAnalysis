@@ -121,6 +121,18 @@ export const projectsReducer = createReducer(null, {
             [projectId]: {project: projectContainer, modified: new Date().toISOString()}
         }
     },
+    ["MODIFY_INDICATOR"]: (state, action) => {
+        const {indicator, projectId} = action.payload;
+        const projectContainer = {...state[projectId].project};
+        const indicators = Array.from(projectContainer.indicator ?? []);
+        const indicatorIndex = _.findIndex(indicators, (i: Indicator) => i._id === indicator._id);
+        indicators[indicatorIndex] = indicator;
+        projectContainer.indicator = indicators;
+        return {
+            ...state,
+            [projectId]: {project: projectContainer, modified: new Date().toISOString()}
+        };
+    },
     ["REMOVE_DRAFTS"]: (state, action) => {
         var stateCopy = Object.assign({}, state);
         _.omitBy(stateCopy, ((project: Project, key: String) => project.state = Status.draft))

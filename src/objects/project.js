@@ -35,7 +35,8 @@ export class Indicator {
     combinations: number;
     basechart: Basechart;
     column: string;
-    status: Status
+    status: Status;
+    paths: string[];
 
 
     constructor(definition: string, combinations: number, basechart: Basechart, status: Status) {

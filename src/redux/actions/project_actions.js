@@ -66,6 +66,14 @@ const removeIndicator = createAction("REMOVE_INDICATOR", function prepare(indica
         }
     }
 })
+const modifyIndicator = createAction("MODIFY_INDICATOR", function prepare(newIndicator: Indicator, projectId: string){
+    return {
+        payload: {
+            indicator: newIndicator,
+            projectId: projectId
+        }
+    }
+});
 const addDatabaseProjects = createAction("DATABASE_ADD", function prepare(projects: Object){
     return {
         payload:{
@@ -77,4 +85,4 @@ const addDatabaseProjects = createAction("DATABASE_ADD", function prepare(projec
 const removeAllDrafts = createAction("REMOVE_DRAFTS", function prepare(){
     return {}
 })
-export {createProject, removeAllDrafts, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, addDatabaseProjects, removeIndicator, removeBasechart};
+export {createProject, removeAllDrafts, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, modifyIndicator, addDatabaseProjects, removeIndicator, removeBasechart};

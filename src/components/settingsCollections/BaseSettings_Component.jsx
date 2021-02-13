@@ -328,7 +328,7 @@ function BaseSettings_Component(props: Props) {
                     actions={[
                         {
                             icon:
-                                <MultilineChartRounded
+                                () => <MultilineChartRounded
                                     fontSize={"large"}
                                     color={"primary"}
                                 />,
@@ -341,7 +341,7 @@ function BaseSettings_Component(props: Props) {
                         },
                         !props.detail ? {
                             icon:
-                                <DeleteRounded
+                                () => <DeleteRounded
                                     fontSize={"large"}
                                     color={"primary"}
                                 />,
@@ -370,7 +370,7 @@ function BaseSettings_Component(props: Props) {
                     actions={[
                         {
                             icon:
-                                <EditRounded
+                                () => <EditRounded
                                     fontSize={"large"}
                                     color={"primary"}
                                 />,

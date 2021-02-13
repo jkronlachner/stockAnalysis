@@ -8,11 +8,16 @@ const REQUEST_URL = BACKEND_URL;
 const generateIndicator = (project: Project, indicatorString: String, basechartId: String) => {
     console.log("Generating Indicator...")
 
-    var raw = JSON.stringify({indicatorString: indicatorString, baseChart: basechartId})
+    var formData = new FormData();
+     formData.append("indicatorString", indicatorString);
+     formData.append("referenceChartId", basechartId);
 
     var config = {
         method: 'POST',
-        data: raw,
+        data: formData,
+        headers: {
+            ...formData.headers
+        },
         url: REQUEST_URL + "/indicator/generate/"
     };
 
@@ -34,7 +39,18 @@ const getIndicators = () => {
     )
 }
 
+const getIndicatorFile = (filePath) => {
+    var config = {
+        method: 'get',
+        url: REQUEST_URL + `/file/readFileContent?filePath=${encodeURIComponent(filePath)}`,
+    }
+    return new Promise((resolve, reject) =>
+        Axios.request(config).then(response => resolve(response.data)).catch(error => reject(error))
+    )
+}
+
 export {
     generateIndicator,
-    getIndicators
+    getIndicators,
+    getIndicatorFile
 }

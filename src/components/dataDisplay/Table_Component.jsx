@@ -114,7 +114,7 @@ export const CustomTable_Component = ({settings, deletable, onDelete, onBlur, ac
                             {
                                 actions.map(x => {
                                     return <Grid item>
-                                        <IconButton size={"medium"} onClick={() => x.onClick(d._id)}>{x.icon}</IconButton>
+                                        <IconButton size={"medium"} onClick={() => x.onClick(d._id)}>{x.icon(d)}</IconButton>
                                     </Grid>
                                 })
 

@@ -141,7 +141,9 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
     function createIndicatorString() {
         let indicatorString = "";
         indicators.forEach(value => {
-            indicatorString += `${value.indicatorType.name}/${value.indicatorReferenceName}(`
+            //TODO: Upgrade backend parser with new string
+            indicatorString += `${value.indicatorType.name}(`
+            //indicatorString += `${value.indicatorType.name}/${value.indicatorReferenceName}(`
         })
         indicatorString += "$BASECHART$()";
         indicators.reverse();

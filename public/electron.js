@@ -32,14 +32,13 @@ function createWindow() {
         width: 1200,
         height: 920,
         movable: true,
-        titleBarStyle: 'hiddenInset',
+        titleBarStyle: 'default',
         title: "Stock Analysis",
         webPreferences: {
             nodeIntegration: true,
             enableRemoteModule: true,
             devTools: true,
         },
-
     });
     mainWindow.setMenuBarVisibility(false);
     Menu.setApplicationMenu(false);
@@ -100,7 +99,6 @@ function showLoadingWindow() {
 function startJavaBackend() {
     log.info("Backend is not running... Starting!");
     const jarPath = path.resolve(__dirname, isDev ? '../output' : '../../../output')
-
     child = spawn('cd ' + jarPath + '&& java', ['-jar', 'veskur-core-backend.jar', '--spring.profiles.active=prod'], {shell: true})
     child.noAsar = true;
     child.stdout.on('data', data => {
