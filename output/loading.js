@@ -1,4 +1,4 @@
 let $ = require('jquery')
-const electron = require("electron");
+const electron = window.require("electron");
 let version = electron.remote.app.getVersion();
-$("version").text(version);
+$("#version").text(version);

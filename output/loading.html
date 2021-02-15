@@ -1,6 +1,7 @@
 
 
 <!DOCTYPE html>
+<script src="loading.js"></script>
 <html lang="de">
 <head>
     <title>Loading...</title>
@@ -30,6 +31,14 @@
     .version{
         position: fixed;
         font-family: "Biko", sans-serif;
+        top: 5%;
+        font-weight: bold;
+        font-size: x-small;
+        color: #969696;
+    }
+    .infoText {
+        position: fixed;
+        font-family: "Biko", sans-serif;
         bottom: 5%;
         font-weight: bold;
         font-size: x-small;
@@ -46,8 +55,8 @@
 <div style="display: flex; justify-content: center; align-items: center">
     <div class="box"></div>
     <p class="bottom_text">Starting StockAnalysis...</p>
-    <p class="version" id="version"/>
+    <p class="infoText">Falls du die Applikation das erste mal öffnest kann das eine Weile dauern.</p>
+    <p id="version" class="version"/>
 </div>
-<script src = "/loading.js" ></script>
 </body>
 </html>

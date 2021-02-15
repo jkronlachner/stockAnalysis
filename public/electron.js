@@ -10,6 +10,8 @@ const net = electron.net;
 const path = require("path");
 const isDev = require("electron-is-dev");
 const spawn = require("child_process").spawn;
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const {autoUpdater} = require("electron-updater");
 const url = require("url");
 const {dialog, Menu} = require("electron")
@@ -121,6 +123,7 @@ function startJavaBackend() {
         loading.close();
     })
 }
+
 // On launch create app window
 app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
@@ -134,31 +137,17 @@ app.on("ready", async () => {
     //Show loading window while checking java and starting backend
     showLoadingWindow()
 
-    //Check java installed
-    let javaSpawnChild = spawn('java', ['--version']);
-    javaSpawnChild.stdout.on('data', data => {
-        if (data.toString().includes("not recognized")) {
-            dialog.showMessageBox({
-                title: "Fehler beim Starten der Applikation",
-                message: "Java command not found. Please install Java command to continue!",
-                detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
-            });
-            return;
-        }
-    })
-
-    //END OF CHECK
-
+    await checkInstalls();
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
     log.info("Checking if backend is running!");
     const axios = require("axios")
-    axios.get("http://localhost:4321/actuator/health").then(value =>{
-        if(value.data.status === "UP"){
+    axios.get("http://localhost:4321/actuator/health").then(value => {
+        if (value.data.status === "UP") {
             log.info("Backend is up! starting window");
             createWindow();
-        }else{
+        } else {
             log.info("Backend is not up, starting...");
             startJavaBackend();
         }
@@ -202,3 +191,66 @@ app.on("activate", () => {
         createWindow();
     }
 });
+
+async function checkInstalls() {
+    //Check java, python and libraries are installed
+    log.info("Checking java...")
+    const javaExec = await exec('java --version');
+    if (javaExec.stdout.toString().includes("not recognized")) {
+        await dialog.showMessageBox({
+            title: "Fehler beim Starten der Applikation",
+            message: "Java command not found. Please install Java command to continue!",
+            detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
+        });
+        return;
+    }
+    showError(javaExec.stderr)
+    log.info("Checking python...")
+    const pythonExec = await exec('python3 --version');
+    if (!pythonExec.stdout.toString().includes("Python 3")) {
+        await dialog.showMessageBox({
+            title: "Fehler beim Starten der Applikation",
+            message: "Python3 command not found. Please install Python3 to continue!",
+            detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
+        });
+        return;
+    }
+    showError(pythonExec.stderr)
+
+    log.info("Getting pip list");
+    const pipListExec = await exec('pip3 list')
+    log.info(pipListExec.stdout);
+
+    if(!pipListExec.stdout.includes("Keras")){
+        log.info("keras not installed! installing...")
+        const {stdout, stderr} = await exec("pip3 install keras")
+        log.silly(stdout, stderr)
+        log.info("installed keras!")
+    }
+    if(!pipListExec.stdout.includes("tensorflow")){
+        log.info("tensor not installed! installing...")
+        const {stdout, stderr} = await exec("pip3 install tensorflow")
+        log.silly(stdout, stderr)
+        log.info("installed tensor!")
+    }
+    if(!pipListExec.stdout.includes("numpy")){
+        log.info("numpy not installed! installing...")
+        const {stdout, stderr} = await exec("pip3 install numpy")
+        log.silly("silly!", stdout, stderr);
+        log.info("installed numpy!")
+    }
+
+    showError(pipListExec.stderr)
+    log.info("Everything installed!")
+    //END OF CHECK
+}
+
+function showError(error){
+    if(!error || error === ""){return}
+    log.error("Error: " + error);
+    dialog.showMessageBox({
+        title: "Fehler beim Starten der Applikation",
+        message: error,
+        detail: "Du kannst die Applikation starten, allerdings könnten dann Funktionen eingeschränkt sein."
+    });
+}

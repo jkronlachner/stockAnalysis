@@ -8,14 +8,14 @@ export const LightTheme = createMuiTheme({
         primary: {
             main: PRIMARY
         },
-        shadowColor: {main: "#e2e2e2", dark: "#d7d7d7"},
+        shadowColor: {main: "#d4d4d4", dark: "#393939"},
         secondary: {
             main: "#3791CB",
             dark: "#1D3557",
         },
         background: {
-            paper: "#f5f4f4",
-            default: "#eeeeee",
+            paper: "#ffffff",
+            default: "#f3f3f3",
         },
         text: {
             primary: FONT_DARK,
