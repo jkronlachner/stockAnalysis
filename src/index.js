@@ -18,7 +18,7 @@ const electron = window.require('electron')
 console.log(electron.remote.nativeTheme, electron.remote.nativeTheme.shouldUseDarkColors)
 ReactDOM.render(<Provider store={store}>
         <SkeletonTheme color={"#cdcdcd"} highlightColor={"#efefef"}>
-            <ThemeProvider theme={electron.remote.nativeTheme.shouldUseDarkColors ? DarkTheme : LightTheme}>
+            <ThemeProvider theme={/*electron.remote.nativeTheme.shouldUseDarkColors false ? DarkTheme : */ LightTheme}>
                 <AlertProvider template={AlertTemplate}>
                     <SnackbarProvider/>
                     <RoutingIndex/>

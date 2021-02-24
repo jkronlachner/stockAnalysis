@@ -6,7 +6,8 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import {useHistory} from "react-router-dom";
 import {createProject as createNewProject} from "../../redux/actions/project_actions";
 import {generateUUID} from "../../service/UUIDService";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {getUserId} from "../../redux/selectors/selectors";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,11 +45,12 @@ export const CreateProject_Component = () => {
     const classes = useStyles();
     const history = useHistory();
     const dispatch = useDispatch();
+    const userId = useSelector(getUserId)
 
     //<editor-fold desc="helpers">
     function createProject() {
         const projectId = generateUUID();
-        dispatch(createNewProject(projectId));
+        dispatch(createNewProject(projectId, userId));
         history.push(`/project/${projectId}`);
     }
 

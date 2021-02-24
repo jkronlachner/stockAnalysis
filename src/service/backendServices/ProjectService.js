@@ -28,7 +28,9 @@ const getAllProjects = () => {
     return fetch(REQUEST_URL + "/user/" + userId(), requestOptions)
         .then(response => response.text())
         .then(contents => Promise.resolve(contents))
-        .catch(error => Promise.reject(error));
+        .catch(error => {
+            return Promise.reject(error)
+        });
 }
 
 const getSingleProject = (projectId) => {

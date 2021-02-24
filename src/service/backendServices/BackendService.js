@@ -12,8 +12,12 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getProjects = () => {
     return getAllProjects().then(contents => {
+        let jsonContent = JSON.parse(contents);
+        if(jsonContent.status >= 400){
+            return Promise.reject(jsonContent);
+        }
         let projects = {};
-        JSON.parse(contents).forEach(x => {
+        jsonContent.forEach(x => {
             let project = parseJSONToProject(x);
             projects = {
                 ...projects,
@@ -27,6 +31,8 @@ export const getProjects = () => {
         store.dispatch(addDatabaseProjects(projects))
     }).catch(reason => {
         store.dispatch(error(reason.message));
+        return Promise.reject(reason);
+
     })
 }
 
@@ -87,11 +93,13 @@ export const signInUser = (username, password) => {
                     store.dispatch(logIn(JSON.parse(content).id), username)
                 }).catch((e) => {
                     console.error(e);
-                    reject();
+                    reject(e);
                 })
             } else {
                 console.log("Response is not ok!");
-                reject();
+                response.text().then((e) =>
+                    reject(e)
+                )
             }
         });
     });

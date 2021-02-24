@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
         //transition: "width 1s ease"
     }, topBar: {
         width: "100%",
-        height: 100,
+        minHeight: 100,
     },
     mainContent: {
         height: "100%",
@@ -64,7 +64,11 @@ export const RootView = () => {
 
     //<editor-fold desc="lifecycle">
     useEffect(() => {
-        getProjects().then(r => r);
+        getProjects().catch((e) => {
+            if(e.message.includes("There is no user")){
+                history.replace("/login");
+            }
+        })
     }, [])
     //</editor-fold>
 

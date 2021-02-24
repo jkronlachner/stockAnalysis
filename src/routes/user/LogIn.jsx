@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     loginRoot: {
         display: "flex",
         flexDirection: "row",
-
+        backgroundColor: theme.palette.background.default
     },
     splash: {
         width: "60%",
@@ -34,8 +34,6 @@ const useStyles = makeStyles((theme) => ({
         textAlign: "center",
         width: "100%"
     }
-
-
 }));
 export const LogIn = () => {
     //mark: hooks
@@ -65,17 +63,17 @@ export const LogIn = () => {
                 setLoading(false)
                 console.log("Sucessfully created user! Redirecting...")
                 history.push("/dashboard")
-            }).catch(() => {
+            }).catch((e) => {
                 setLoading(false);
-                setError("Fehler bei der Anmeldung.")
+                setError(JSON.parse(e).message)
             })
         } else {
             signInUser(usernameReference.current.value, passwordReference.current.value).then(() => {
                 console.log("Successfully logged in!");
                 history.push("/dashboard");
-            }).catch(() => {
+            }).catch((e) => {
                 setLoading(false);
-                setError("Fehler bei der Anmeldung.")
+                setError(JSON.parse(e).message)
             })
         }
     }

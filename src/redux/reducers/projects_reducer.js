@@ -7,10 +7,13 @@ const _ = require("lodash");
 export const projectsReducer = createReducer(null, {
     ["CREATE"]: (state, action) => {
         const projectId: string = action.payload.projectId;
+        const userId: string = action.payload.userId;
+
         let project = new Project();
         project.creationTimestamp = new Date();
         project.status = Status.draft;
         project.projectId = projectId;
+        project.userId = userId; 
         const draftNumber = Object.values(state ?? []).filter((p) => p.projectTitle !== "New Draft").length + 1
         project.projectTitle = "New Draft " + draftNumber;
         return {

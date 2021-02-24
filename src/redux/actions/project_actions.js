@@ -1,10 +1,11 @@
 import {createAction} from "@reduxjs/toolkit";
 import {Basechart, Indicator, Project} from "../../objects/project";
 
-const createProject = createAction("CREATE", function prepare(projectId: string){
+const createProject = createAction("CREATE", function prepare(projectId: string, userId: String){
     return {
         payload: {
             projectId: projectId,
+            userId: userId,
         }
     }
 });

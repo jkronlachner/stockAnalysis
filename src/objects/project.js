@@ -17,6 +17,7 @@ export class Project {
     indicator: Array<Indicator>;
     rules: Array<mixed>;
     options: Array<mixed>;
+    userId: String;
 }
 
 export class Basechart {

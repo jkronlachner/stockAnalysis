@@ -38,7 +38,6 @@ function createWindow() {
         },
     });
     mainWindow.setMenuBarVisibility(false);
-    Menu.setApplicationMenu(false);
 
     // Determine what to render based on environment
     mainWindow.loadURL(
@@ -54,12 +53,23 @@ function createWindow() {
     if (isDev) {
         //Add Dev Extensions to Chromium
         const ses = mainWindow.webContents.session
-        ses.loadExtension(
-            "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0"
-        )
-        ses.loadExtension(
-            "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0"
-        )
+        if(require("os").platform() === "win32"){
+            log.info("Platform: WINDOWS");
+            ses.loadExtension(
+                "C:\\Users\\julia\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\lmhkpmbekcpmknklioeibfkpmmfibljd\\2.17.0_0"
+            ).then(() => {})
+            ses.loadExtension(
+                "C:\\Users\\julia\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\4.10.1_0"
+            ).then(() => {})
+        }else{
+            ses.loadExtension(
+                "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0"
+            ).then(() => {})
+            ses.loadExtension(
+                "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0"
+            ).then(() => {})
+        }
+
         mainWindow.webContents.openDevTools();
     }
     // Create event to close window on close
@@ -210,13 +220,20 @@ async function checkInstalls() {
     }
     showError(javaExec.stderr)
     log.info("Checking python...")
-    const pythonExec = await exec('python3 --version');
-    if (!pythonExec.stdout.toString().includes("Python 3")) {
+    const pythonExec = await exec('python3 --version').catch(() => {
+        //loading.close();
+        dialog.showMessageBox({
+            title: "Fehler beim Starten der Applikation",
+            message: "Python ist auf diesem Computer nicht installiert. Bitte installiere Pyhton um StockAnalysis starten zu können. "
+        }).then(() => loading.close());
+    });
+    if (pythonExec.stdout.toString().includes("Python was not found")) {
         await dialog.showMessageBox({
             title: "Fehler beim Starten der Applikation",
             message: "Python3 command not found. Please install Python3 to continue!",
             detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
         });
+        loading.close();
         return;
     }
     showError(pythonExec.stderr)
@@ -225,32 +242,57 @@ async function checkInstalls() {
     const pipListExec = await exec('pip3 list')
     log.info(pipListExec.stdout);
 
-    if(!pipListExec.stdout.includes("Keras")){
+    if(!pipListExec.stdout.includes("Keras")) {
         log.info("keras not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install keras")
+        const {stdout, stderr} = await exec("pip3 install keras").catch((e) =>
+            dialog.showMessageBox({
+                title: "Fehler beim installieren von keras!",
+                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
+                details: e
+            })
+        )
         log.silly(stdout, stderr)
         log.info("installed keras!")
     }
-    if(!pipListExec.stdout.includes("tensorflow")){
+    if(!pipListExec.stdout.includes("tensorflow")) {
         log.info("tensor not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install tensorflow")
+        const {stdout, stderr} = await exec("pip3 install tensorflow").catch((e) => {
+                log.error(e)
+                dialog.showMessageBox({
+                    title: "Fehler beim installieren von tensorflow!",
+                    message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
+                    details: e
+                })
+            }
+        )
         log.silly(stdout, stderr)
         log.info("installed tensor!")
     }
-    if(!pipListExec.stdout.includes("numpy")){
+    if(!pipListExec.stdout.includes("numpy")) {
         log.info("numpy not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install numpy")
+        const {stdout, stderr} = await exec("pip3 install numpy").catch((e) =>
+            dialog.showMessageBox({
+                title: "Fehler beim installieren von numpy!",
+                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
+                details: e
+            })
+        )
         log.silly("silly!", stdout, stderr);
         log.info("installed numpy!")
     }
-    if(!pipListExec.stdout.includes("matplotlib")){
+    if(!pipListExec.stdout.includes("matplotlib")) {
         log.info("matplot not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install matplotlib")
+        const {stdout, stderr} = await exec("pip3 install matplotlib").catch((e) =>
+            dialog.showMessageBox({
+                title: "Fehler beim installieren von matplotlib!",
+                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
+                details: e
+            })
+        )
         log.silly("silly!", stdout, stderr);
         log.info("installed matplotlib!")
     }
 
-    showError(pipListExec.stderr)
     log.info("Everything installed!")
     //END OF CHECK
 }
@@ -258,6 +300,7 @@ async function checkInstalls() {
 function showError(error){
     if(!error || error === ""){return}
     log.error("Error: " + error);
+    loading.close();
     dialog.showMessageBox({
         title: "Fehler beim Starten der Applikation",
         message: error,
