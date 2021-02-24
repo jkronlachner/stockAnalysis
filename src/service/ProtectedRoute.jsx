@@ -4,16 +4,12 @@ import {connect} from "react-redux";
 import {checkUser} from "./backendServices/UserService";
 
 function PrivateRoute({user, children, ...rest}){
-
     const history = useHistory();
-
-    /*checkUser().then((isUserLoggedIn: boolean) => {
+    checkUser().then((isUserLoggedIn: boolean) => {
         if(!isUserLoggedIn){
             history.replace("/login")
         }
-    })*/
-
-    console.log(user);
+    })
     return (
         <Route
             {...rest}

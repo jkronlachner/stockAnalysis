@@ -1,7 +1,13 @@
 import {LoadingStatus} from "../../objects/enums/loading.enum";
 import {Basechart, Project} from "../../objects/project";
+const _ = require("lodash")
 
 const getAllProjects = state => state.projects ?? {};
+const getLatestProjects = (state, count) => {
+    const projects = _.values(state.projects).sort((p1, p2) => p1.project.status - p2.project.status)
+    console.log(projects);
+    return _.slice(projects, 0, count)
+}
 const getProjectById = (state, id) => {
     console.log("Get projects by id: ", state)
     if (state == null) {
@@ -25,4 +31,4 @@ const hasIndicator = (project: Project, basechartId: String) => {
     });
 }
 
-export {getAllProjects, getProjectById, getLoadingStatus, hasIndicator};
+export {getAllProjects, getProjectById, getLoadingStatus, hasIndicator, getLatestProjects};

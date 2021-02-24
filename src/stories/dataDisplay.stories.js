@@ -1,4 +1,3 @@
-import {CustomTable_Component} from "../components/dataDisplay/Table_Component";
 import {Chart_Component} from "../components/dataDisplay/Chart_Component";
 
 export default {
@@ -54,5 +53,5 @@ const chartData = [
 
 ]
 
-export const Table_Read_only = () => CustomTable_Component({readOnly: false, data: tableData});
+
 export const Chart = () => Chart_Component({data: chartData})

@@ -212,6 +212,7 @@ function BaseSettings_Component(props: Props) {
             actions: []
         });
     }
+
     function fileGeneratedCallback(fileContents: String) {
         convertToFileAndUploadToServer(fileContents, p => setLoading({
             ...loading,
@@ -288,7 +289,6 @@ function BaseSettings_Component(props: Props) {
     }
 
 
-
     //</editor-fold>
 
 
@@ -299,7 +299,8 @@ function BaseSettings_Component(props: Props) {
                                       setOpen={(open) => setChartPreviewDialog(Object.assign({}, chartPreviewDialog, {open: open}))}/>
         <ImportBasechartDialog_Component files={acceptedFiles} setOpen={setImportDialogOpen} open={importDialogOpen}
                                          onDone={handleImportDialogDone}/>
-        <TargetDataEditor project={props.project} setOpen={setTargetDataOpen} open={targetDataOpen} fileGeneratedCallback={fileGeneratedCallback}/>
+        <TargetDataEditor project={props.project} setOpen={setTargetDataOpen} open={targetDataOpen}
+                          fileGeneratedCallback={fileGeneratedCallback}/>
 
         <Grid container direction="row"
               justify="center"
@@ -327,11 +328,10 @@ function BaseSettings_Component(props: Props) {
                 <CustomTable_Component
                     actions={[
                         {
-                            icon:
-                                () => <MultilineChartRounded
-                                    fontSize={"large"}
-                                    color={"primary"}
-                                />,
+                            icon: () => <MultilineChartRounded
+                                fontSize={"large"}
+                                color={"primary"}
+                            />,
                             onClick: (id) => {
                                 setChartPreviewDialog({
                                     open: true,
@@ -346,7 +346,7 @@ function BaseSettings_Component(props: Props) {
                                     color={"primary"}
                                 />,
                             onClick: (id) => onDelete(id)
-                        } : {}
+                        } : {icon: () => null}
 
                     ]}
                     deletable={true}
@@ -365,15 +365,16 @@ function BaseSettings_Component(props: Props) {
                 </Typography>
                 <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer"}}
                             onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
-                <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)} disabled={!props.project.basecharts || props.project.basecharts.length === 0}>Zieldatensatz generieren</Button>
+                <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)}
+                        disabled={!props.project.basecharts || props.project.basecharts.length === 0 || props.detail}>Zieldatensatz
+                    generieren</Button>
                 {props.project.zieldatensatz ? <CustomTable_Component
                     actions={[
                         {
-                            icon:
-                                () => <EditRounded
-                                    fontSize={"large"}
-                                    color={"primary"}
-                                />,
+                            icon: () => <EditRounded
+                                fontSize={"large"}
+                                color={"primary"}
+                            />,
                             onClick: (id) => {
                                 targetDataDropzone.open();
                             }

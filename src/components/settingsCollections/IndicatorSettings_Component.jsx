@@ -108,8 +108,7 @@ export const IndicatorSettings_Component = ({project}) => {
                         onClick: (id) => onDelete(id)
                     },
                     {
-                        icon: (indicator) => indicator.status === Status.passed ? <InsertChartRounded fontSize={"large"}
-                                                                                                      color={"primary"}/> : <CircularProgress/>,
+                        icon: (indicator) => indicator.status === Status.passed ? <InsertChartRounded fontSize={"large"} color={"primary"}/> : <CircularProgress/>,
                         onClick: (id) => {
                             setSelectedIndicatorId(id)
                         }

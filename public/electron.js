@@ -21,11 +21,6 @@ let mainWindow;
 let child;
 let loading;
 
-//Auto updater Logging
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
-
 function createWindow() {
 
 
@@ -128,10 +123,19 @@ function startJavaBackend() {
 app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
     const os = require("os");
+    autoUpdater.logger = log;
+    autoUpdater.allowPrerelease = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.autoDownload = true;
+    autoUpdater.logger.transports.file.level = 'info';
+    log.info('App starting...');
     const platform = os.platform() + "_" + os.arch();
     const version = app.getVersion();
     autoUpdater.setFeedURL('https://stock-analysis-update-server.herokuapp.com/' + platform + '/' + version);
-    autoUpdater.checkForUpdatesAndNotify();
+    await autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.on("error", (e) => log.error(e));
+    autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
+    autoUpdater.on("download-progress", ({progress, precent}) => log.info("Downloading: " + progress))
     //Auto Updater END
 
     //Show loading window while checking java and starting backend
@@ -238,6 +242,12 @@ async function checkInstalls() {
         const {stdout, stderr} = await exec("pip3 install numpy")
         log.silly("silly!", stdout, stderr);
         log.info("installed numpy!")
+    }
+    if(!pipListExec.stdout.includes("matplotlib")){
+        log.info("matplot not installed! installing...")
+        const {stdout, stderr} = await exec("pip3 install matplotlib")
+        log.silly("silly!", stdout, stderr);
+        log.info("installed matplotlib!")
     }
 
     showError(pipListExec.stderr)

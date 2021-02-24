@@ -3,10 +3,20 @@ import Axios from "axios";
 import {Project} from "../../objects/project";
 import {parseProjectToProjectDTO} from "./JSONParser";
 import {BACKEND_URL} from "../../settings";
+import {Status} from "../../objects/enums/status.enum";
+const _ = require("lodash")
 
 const REQUEST_URL = BACKEND_URL;
 
 const userId = () => store.getState().user.userId;
+
+const checkProjectStatus = () => {
+    const state = store.getState();
+    const loadingProjects = _.values(state.projects).filter(project => project.project.status === Status.waiting);
+    console.log("LoadingProjects: ", loadingProjects);
+
+}
+checkProjectStatus();
 
 const getAllProjects = () => {
     let requestOptions = {
@@ -113,7 +123,6 @@ const getFile = (fileId: String) => {
     }
     return new Promise((resolve, reject) => Axios.request(config).then(result => resolve(result.data)).catch(error => reject(error)));
 }
-
 
 const deleteTempFiles = () => {
     const config = {

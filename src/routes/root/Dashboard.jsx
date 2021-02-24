@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import {ProjectTab_Component} from "../../components/cells/ProjectTab_Component";
 import {CreateProject_Component} from "../../components/miscellaneous/CreateProject_Component";
 import {connect} from "react-redux";
-import {getAllProjects, getLoadingStatus} from "../../redux/selectors/selectors";
+import {getAllProjects, getLatestProjects, getLoadingStatus} from "../../redux/selectors/selectors";
 import {LoadingStatus} from "../../objects/enums/loading.enum";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
@@ -99,6 +99,6 @@ const Dashboard = ({projects, loading}) => {
     </div>
 }
 const mapStateToProps = state => {
-    return {projects: getAllProjects(state), loading: getLoadingStatus(state)};
+    return {projects: getLatestProjects(state, 3), loading: getLoadingStatus(state)};
 }
 export default connect(mapStateToProps)(Dashboard)
