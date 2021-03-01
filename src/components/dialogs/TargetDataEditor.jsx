@@ -6,7 +6,7 @@ import {
     Dialog, DialogActions,
     DialogContent,
     DialogTitle, Divider,
-    MenuItem,
+    MenuItem, Slider,
     TextField,
     Typography,
     useTheme
@@ -52,6 +52,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
     const [fields, setFields] = useState([]);
     const [selectedBasechart, setSelectedbasechart] = useState();
     const [editorSettings, setEditorSettings] = useState(baseEditorSettings);
+    const [sliderValue, setSliderValue] = useState(5);
 
     useEffect(() => {
         setData([]);
@@ -70,6 +71,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
     }, [selectedBasechart])
 
     useEffect(() => {
+        setData([]);
         setData([...data, {id: "buys", data: editorSettings.buys}, {
             id: "sells",
             data: editorSettings.sells
@@ -104,20 +106,26 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
     }
 
     function addEvent(point) {
+        const dataArray: any[] = data[0].data;
+        const indexOfPoint = dataArray.findIndex(value => value.x === point.data.x && value.y === point.data.y);
+
         if (editorSettings.editorMode === EditorMode.BUY) {
-            const buys = Array.from([...editorSettings.buys, {
-                x: point.data.x,
-                y: point.data.y
-            }])
+            const buys = Array.from([...editorSettings.buys])
+            console.log(buys, indexOfPoint);
+            for (let i = indexOfPoint; i < indexOfPoint + sliderValue; i++) {
+                buys.push(dataArray[i])
+            }
+            console.log(buys);
             setEditorSettings({
                 ...editorSettings, buys: buys
             })
         } else if (editorSettings.editorMode === EditorMode.SELL) {
+            const sells = Array.from([...editorSettings.sells])
+            for (let i = indexOfPoint; i < indexOfPoint + sliderValue; i++) {
+                sells.push(dataArray[i])
+            }
             setEditorSettings({
-                ...editorSettings, sells: [...editorSettings.sells, {
-                    x: point.data.x,
-                    y: point.data.y
-                }]
+                ...editorSettings, sells: sells
             })
         }
     }
@@ -189,6 +197,23 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
             </div>
             <div className={classes.editorPan}>
                 <Typography variant={"h5"}>Editor Settings</Typography>
+                <Box m={4}>
+                    <Typography variant={"body1"}>
+                        zu setzende Punkte
+                    </Typography>
+                    <Slider
+                        defaultValue={5}
+                        step={1}
+                        min={1}
+                        max={25}
+                        valueLabelDisplay={"on"}
+                        value={sliderValue}
+                        onChange={(event, value) => setSliderValue(value)}
+                    />
+                    <Typography variant={"caption"}>
+                        Je mehr Buy und Sell Points zu setzt, desto besser funktioniert die Vorhersage. Wenn du also einen großen Graphen hast wähle hier eine große Zahl aus.
+                    </Typography>
+                </Box>
                 <Box m={4} display={"flex"} flexDirection={"column"}>
                     <Button color="primary" variant={"contained"}
                             style={{marginBottom: 10}}

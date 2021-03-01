@@ -19,7 +19,6 @@ export default function RoutingIndex() {
     })
 
     return <>
-
         <Router>
             <Switch>
                 <Route path={"/login"}><LogIn/></Route>

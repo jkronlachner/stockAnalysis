@@ -86,4 +86,14 @@ const addDatabaseProjects = createAction("DATABASE_ADD", function prepare(projec
 const removeAllDrafts = createAction("REMOVE_DRAFTS", function prepare(){
     return {}
 })
-export {createProject, removeAllDrafts, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, modifyIndicator, addDatabaseProjects, removeIndicator, removeBasechart};
+
+const updateProjectStatus = createAction("UPDATE_STATUS", function prepare(status, statusText, projectId) {
+    return {
+        payload:{
+            projectId: projectId,
+            status: status,
+            statusText: statusText
+        }
+    }
+})
+export {updateProjectStatus, createProject, removeAllDrafts, addBasechart, modifyProject, deleteProject, modifyBasechart, addIndicator, modifyIndicator, addDatabaseProjects, removeIndicator, removeBasechart};

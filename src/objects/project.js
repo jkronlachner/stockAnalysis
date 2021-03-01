@@ -8,6 +8,7 @@ export class Project {
     projectId: string;
     projectTitle: string;
     status: Status;
+    statusText: string;
     timeunit: "M" | "W" | "D" | "h" | "m" | "s" | "ms";
     runtime: string;
     correlation: number;

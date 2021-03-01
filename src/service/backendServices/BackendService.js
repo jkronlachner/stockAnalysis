@@ -29,6 +29,7 @@ export const getProjects = () => {
         });
         store.dispatch(loaded());
         store.dispatch(addDatabaseProjects(projects))
+        return Promise.resolve(_.values(projects).map(x => x.project));
     }).catch(reason => {
         store.dispatch(error(reason.message));
         return Promise.reject(reason);

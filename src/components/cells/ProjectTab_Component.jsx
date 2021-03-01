@@ -76,7 +76,7 @@ export const ProjectTab_Component = ({project, isLoading = false}) => {
                 <Typography className={classes.title} variant={"h2"}>{isLoading ?
                     <Skeleton width={120} height={50}/> : project.projectTitle}</Typography>
                 <Typography variant={"caption"}>{isLoading ?
-                    <Skeleton width={200} height={30}/> : "..."}</Typography>
+                    <Skeleton width={200} height={30}/> : project.statusText ?? ""}</Typography>
             </div>
         </ButtonBase>
     </>

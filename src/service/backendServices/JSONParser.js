@@ -6,7 +6,7 @@ import {store} from "../../redux/reducers";
 const _ = require("lodash");
 const userId = () => store.getState().user.userId;
 
-function getStatusFromString(status) {
+export function getStatusFromString(status) {
     switch (_.toLower(status)) {
         case "finished":
             return 1;
@@ -22,7 +22,7 @@ function getStatusFromString(status) {
             return 2;
     }
 }
-function statusToString(status){
+export function statusToString(status){
     switch (status) {
         case 1:
             return "FINISHED";
@@ -40,7 +40,6 @@ function statusToString(status){
 }
 
 export function parseJSONToProject(jsonObject: Object) {
-    console.log("Parsing... ", jsonObject);
     let project = new Project();
     project.projectId = jsonObject.id;
     project.projectTitle = jsonObject.name;
@@ -70,13 +69,11 @@ export function parseJSONToProject(jsonObject: Object) {
             return indicator;
         })
     }
-    console.log(project);
     return project;
 }
 
 
 export function parseProjectToProjectDTO(project: Project) {
-    console.log("Parsing Project to Project DTO!")
     let formData = new FormData();
     const projectDTO = {
         name: project.projectTitle,

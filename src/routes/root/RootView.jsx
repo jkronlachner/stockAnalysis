@@ -12,6 +12,7 @@ import Dashboard from "./Dashboard";
 import {getProjects} from "../../service/backendServices/BackendService";
 import {Settings} from "./Settings";
 import DetailView from "../project/DetailView";
+import {startStatusPolling} from "../../service/backendServices/Poller";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,10 +66,15 @@ export const RootView = () => {
     //<editor-fold desc="lifecycle">
     useEffect(() => {
         getProjects().catch((e) => {
-            if(e.message.includes("There is no user")){
+            if (e.message.includes("There is no user")) {
                 history.replace("/login");
             }
-        })
+        }).then(projects => {
+                if (projects) {
+                    startStatusPolling(projects)
+                }
+            }
+        )
     }, [])
     //</editor-fold>
 
@@ -84,9 +90,9 @@ export const RootView = () => {
             </div>
             <div className={classes.container}>
                 {hideNav ? <IconButton onClick={() => {
-                    if(history.length < 1){
+                    if (history.length < 1) {
                         history.goBack()
-                    }else{
+                    } else {
                         history.replace("/dashboard")
                     }
                 }}><ArrowBackIosRounded/></IconButton> : <></>}

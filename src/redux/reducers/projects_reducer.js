@@ -143,6 +143,17 @@ export const projectsReducer = createReducer(null, {
         return {
             ...newState
         }
+    },
+    ["UPDATE_STATUS"]: (state, action) => {
+        const {projectId, status, statusText} = action.payload;
+        return {
+            ...state,
+            [projectId]: {
+                project: Object.assign({}, state[projectId].project, {status: status, statusText: statusText}),
+                modified: new Date().toISOString()
+            },
+
+        }
     }
 });
 
