@@ -32,19 +32,20 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1.6.0
         with:
           # GitHub authentication token
-          github_token: $GITHUB_TOKEN
+          github_token: ${{GITHUB_TOKEN}}
           # Base64-encoded code signing certificate for macOS
-          mac_certs: $MAC_CERTS
+          mac_certs: ${{secrets.MAC_CERTS}}
           # Password for decrypting `mac_certs`
-          mac_certs_password: $MAC_CERTS_PASSWORD
+          mac_certs_password: ${{secrets.MAC_CERTS_PASSWORD}}
           # Whether the app should be released after a successful build
           release: true
           # Base64-encoded code signing certificate for Windows
           # Name of the optional NPM build script which is executed before `electron-builder`
-          build_script_name: electron-pack
+          build_script_name: build
           # Whether the action should execute the NPM build script before running `electron-builder`
           skip_build: true
           # Whether to run `electron-builder` using the Vue CLI plugin instead of calling the command directly
           use_vue_cli: false
           # Other arguments to pass to the `electron-builder` command, e.g. configuration overrides
           max_attempts: 1
+          args: "-mw"
