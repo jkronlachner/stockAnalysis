@@ -37,6 +37,24 @@ function createWindow() {
             devTools: true,
         },
     });
+    mainWindow.on("close", (e) => {
+        var choice = electron.dialog.showMessageBoxSync(mainWindow, {
+            type: 'warning',
+            buttons: ['Nein', 'Ja'],
+            title: 'Achtung',
+            message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
+        })
+        if (choice === 0) {
+            e.preventDefault()
+        } else {
+            log.info("Quitting backend");
+            const axios = require("axios")
+            axios.post("https://localhost:4321/actuator/shutdown").then(r => log.info("Shutted backend down!"))
+            log.info("Tried to quit backend via request!");
+        }
+
+    })
+
     mainWindow.setMenuBarVisibility(false);
 
     // Determine what to render based on environment
@@ -146,6 +164,18 @@ app.on("ready", async () => {
     autoUpdater.on("error", (e) => log.error(e));
     autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
     autoUpdater.on("download-progress", ({progress, precent}) => log.info("Downloading: " + progress))
+    autoUpdater.on("update-downloaded", () => {
+        var choice = electron.dialog.showMessageBoxSync(mainWindow, {
+            type: 'warning',
+            buttons: ['Jetzt installieren', 'Später installieren'],
+            title: 'Update verfügbar!',
+            message: 'Es ist ein Update für StockAnalysis verfügbar und heruntergeladen. Möchtest du es jetzt installieren?'
+        })
+        if (choice === 0) {
+            autoUpdater.quitAndInstall();
+        }
+    })
+
     //Auto Updater END
 
     //Show loading window while checking java and starting backend
@@ -181,28 +211,11 @@ app.on("window-all-closed", () => {
     }
 });
 
-app.on("before-quit", async (e) => {
-    var choice = electron.dialog.showMessageBoxSync(mainWindow, {
-        type: 'warning',
-        buttons: ['Nein', 'Ja'],
-        title: 'Achtung',
-        message: 'Bist du sicher das du das Fenster schließen möchtest? Wenn du das tust verlierst du jeglichen Fortschritt beim durchrechnen der Projekte.'
-    })
-    if (choice === 0) {
-        e.preventDefault()
-    } else {
-        log.info("Quitting backend");
-        const axios = require("axios")
-        axios.post("https://localhost:4321/actuator/shutdown").then(r => log.info("Shutted backend down!"))
-        log.info("Tried to quit backend via request!");
-    }
-
-})
-
-
 app.on("activate", () => {
-    if (mainWindow !== null) {
+    if (mainWindow === null) {
         createWindow();
+    }else{
+        mainWindow.show();
     }
 });
 

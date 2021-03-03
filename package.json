@@ -49,7 +49,7 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-only": "electron .",
     "preelectron-pack": "npm run-script build",
-    "electron-pack": "electron-builder -mw"
+    "electron-pack": "electron-builder -m"
   },
   "eslintConfig": {
     "extends": [
@@ -89,7 +89,7 @@
       "category": "public.app-category.utilities",
       "icon": "./build/icon.icns"
     },
-    "icon": "./build/icon.icns",
+    "icon": "./build/icon.png",
     "files": [
       "build/**/*"
     ],

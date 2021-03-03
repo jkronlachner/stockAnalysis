@@ -88,7 +88,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
                 const resultData = basechart.columns.map(column => {
                     return {
                         id: column,
-                        data: result.data.map((x, i) => {
+                        data: result.data.filter(x => !_.isNaN(parseFloat(x[column]))).map((x, i) => {
                             const dateRow = x[result.meta.fields[0]];
                             const valueRow = parseFloat(x[column])
                             return {
@@ -111,11 +111,9 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
 
         if (editorSettings.editorMode === EditorMode.BUY) {
             const buys = Array.from([...editorSettings.buys])
-            console.log(buys, indexOfPoint);
             for (let i = indexOfPoint; i < indexOfPoint + sliderValue; i++) {
                 buys.push(dataArray[i])
             }
-            console.log(buys);
             setEditorSettings({
                 ...editorSettings, buys: buys
             })
@@ -132,7 +130,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
 
     function renderEditor() {
         return <div className={classes.editor}>
-            <div style={{height: "100%", width: "80%"}}><ResponsiveLineCanvas
+            <div style={{height: "100%", width: "80%", overflowY: "scroll"}}><div style={{width: "400%", height: "100%"}}><ResponsiveLineCanvas
                 data={data}
                 margin={{top: 50, right: 50, bottom: 50, left: 50}}
                 lineWidth={2}
@@ -194,6 +192,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
                 enableCrosshair
                 onClick={(point, event) => addEvent(point)}
                 crosshairType={"bottom-left"}/>
+            </div>
             </div>
             <div className={classes.editorPan}>
                 <Typography variant={"h5"}>Editor Settings</Typography>
@@ -289,7 +288,7 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
                         props.fileGeneratedCallback(targetDataText);
                     }
                     props.setOpen(false)
-                }}>Editor schließen</Button>
+                }}>{editorSettings.buys.length === 0 || editorSettings.sells.length === 0 ? "Editor schließen" : "Generieren"}</Button>
             </DialogActions>
         </Dialog> : <div></div>}</div>
 

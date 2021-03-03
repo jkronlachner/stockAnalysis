@@ -168,7 +168,7 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
     return <Dialog
         BackdropProps={{style: {zIndex: "-3"}}}
         onBackdropClick={() => props.setOpen(false)}
-        classes={{paper: classes.paper, container: classes.root}}
+        classes={{paper: classes.paper, root: classes.root}}
         fullWidth
         open={props.open}
     >

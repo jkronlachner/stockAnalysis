@@ -22,6 +22,7 @@ export const LightTheme = createMuiTheme({
             secondary: FONT_LIGHT
         },
 
+
     },
     typography: {
         fontFamily: 'Biko, sans-serif',

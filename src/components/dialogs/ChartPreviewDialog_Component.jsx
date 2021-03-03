@@ -19,7 +19,7 @@ const _ = require("lodash");
 
 const useStyles = makeStyles((theme) => ({
     contentRoot: {
-        padding: 40,
+        padding: 40, overflowY: "scroll"
     }
 }));
 const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, indicatorId}) => {
@@ -98,7 +98,7 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
                     return {
                         id: column,
                         color: theme.palette.primary.main,
-                        data: result.data.map((x, i) => {
+                        data: result.data.filter(x => !_.isNaN(parseFloat(x[column]))).map((x, i) => {
                             const dateRow = x[result.meta.fields[0]];
                             const valueRow = parseFloat(x[column])
                             return {
@@ -142,34 +142,44 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
                 <Typography>{error.description}</Typography>
             </div> :
             data.length === 0 ? <h1>Loading...</h1> :
-                <ResponsiveLineCanvas
-                    data={data}
-                    margin={{top: 50, right: 140, bottom: 50, left: 50}}
-                    enablePoints={false}
-                    lineWidth={2}
-                    curve={"linear"}
-                    colors={{scheme: "red_blue"}}
-                    enableGridX={false}
-                    enableGridY={true}
-                    useMesh={true}
-                    axisBottom={null}
-                    legends={[
-                        {
-                            anchor: 'bottom-right',
-                            direction: 'column',
-                            justify: false,
-                            translateX: 140,
-                            translateY: 0,
-                            itemSpacing: 2,
-                            itemDirection: 'left-to-right',
-                            itemWidth: 80,
-                            itemHeight: 12,
-                            itemOpacity: 0.75,
-                            symbolSize: 12,
+                    <div style={{width: "400%", height: "100%"}}>
+                        <ResponsiveLineCanvas
+                            data={data}
+                            margin={{top: 50, right: 140, bottom: 50, left: 50}}
+                            enablePoints={false}
+                            lineWidth={2}
+                            curve={"linear"}
+                            colors={{scheme: "red_blue"}}
+                            enableGridX={false}
+                            enableGridY={true}
+                            useMesh={true}
+                            axisBottom={{
+                                tickValues: data[0].data.filter((x, i) => i % 10 === 0).map(x => x.x),
+                                orient: 'left',
+                                tickSize: 5,
+                                tickPadding: 5,
+                                tickRotation: 90,
+                                legend: 'Datum',
+                                legendOffset: -35,
+                                legendPosition: 'left'
+                            }}
+                            legends={[
+                                {
+                                    anchor: 'bottom-left',
+                                    direction: 'column',
+                                    justify: false,
+                                    translateX: 0,
+                                    translateY: -10,
+                                    itemSpacing: 2,
+                                    itemDirection: 'left-to-right',
+                                    itemWidth: 80,
+                                    itemHeight: 12,
+                                    itemOpacity: 0.75,
+                                    symbolSize: 12,
 
-                        }
-                    ]}
-                />;
+                                }
+                            ]}
+                        /></div>
     }
 
     function renderIndicatorGraphWithChooser() {
@@ -186,15 +196,15 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
     }
 
     function renderChooserOrGraph() {
-        if(indicatorId && data.length !== 0){
+        if (indicatorId && data.length !== 0) {
             return renderBasechartGraph();
         }
 
-        if(indicatorId){
+        if (indicatorId) {
             return renderIndicatorGraphWithChooser()
         }
 
-        if(data.length !== 0){
+        if (data.length !== 0) {
             return renderBasechartGraph();
         }
     }

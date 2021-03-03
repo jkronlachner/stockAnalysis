@@ -22,6 +22,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableRow from "@material-ui/core/TableRow";
 import {TextField_Component} from "../inputs/TextField_Component";
+import {useAlert} from "react-alert";
 
 const _ = require('lodash');
 
@@ -39,9 +40,11 @@ const useStyles = makeStyles((theme) => ({
 export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) => {
     //mark: hooks
     const classes = useStyles();
+    const alert = useAlert();
     const [step, setStep] = useState(0);
     const [basecharts, setBasecharts] = useState([]);
     const [doneButtonEnabled, setDoneButtonEnabled] = useState(false);
+
 
 
     //<editor-fold desc="lifecycle">
@@ -59,15 +62,39 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                     fastMode: true,
                     preview: 4,
                     complete: (result) => {
-                        tempCharts.push({
-                            name: file.name,
-                            grouped: false,
-                            basechart: new Basechart(),
-                            headers: result.meta.fields,
-                            preview: result.data,
-                            nickname: file.name,
-                            selectedRows: []
-                        })
+                        if(result.meta.delimiter !== ',' && open){
+                            alert.show("Die Datei muss mit einem Beistrich \",\" getrennt sein!", {
+                                title: "",
+                                closeCopy: "",
+                                actions: [{
+                                    copy: "Okay",
+                                    onClick: () => setOpen(false)
+                                }]
+                            })
+                            return;
+                        }
+                        if(!result.meta.fields.toString().toLowerCase().includes("date") && open){
+                            alert.show("Die Datei muss mit eine Datumsspalte beinhalten!", {
+                                title: "",
+                                closeCopy: "",
+                                actions: [{
+                                    copy: "Okay",
+                                    onClick: () => setOpen(false)
+                                }]
+                            })
+                            return;
+                        }else{
+                            tempCharts.push({
+                                name: file.name,
+                                grouped: false,
+                                basechart: new Basechart(),
+                                headers: result.meta.fields,
+                                preview: result.data,
+                                nickname: file.name,
+                                selectedRows: []
+                            })
+                        }
+
                         resolve();
                     }
                 })
@@ -203,7 +230,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     return <Dialog
         BackdropProps={{style: {zIndex: "-3"}}}
         onBackdropClick={() => setOpen(false)}
-        classes={{paper: classes.paper, container: {padding: "80px 40px"}}}
+        classes={{paper: classes.paper, root: {padding: "80px 40px"}}}
         fullWidth
         open={open}
         fullScreen

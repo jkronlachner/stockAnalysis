@@ -9,6 +9,7 @@ import {LoadingStatus} from "../../objects/enums/loading.enum";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import {Paper} from "@material-ui/core";
+import {generateUUID} from "../../service/UUIDService";
 
 const useStyles = makeStyles((theme) => ({
     dashboardRoot: {padding: "40px"},
@@ -39,8 +40,9 @@ const Dashboard = ({projects, loading}) => {
 
         for (const {project} of Object.values(projects)) {
             if (project.projectTitle) {
-                projectList.push(<Grid item>
+                projectList.push(<Grid item key={project.projectTitle + generateUUID()}>
                     <ProjectTab_Component
+                        key={project.projectTitle + generateUUID()}
                         project={project}
                     /></Grid>);
             }

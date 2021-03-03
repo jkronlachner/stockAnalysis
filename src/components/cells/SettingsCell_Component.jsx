@@ -30,7 +30,7 @@ const useStyles = makeStyles((/*theme*/) => ({
         display: "flex",
         flexDirection: "column",
     },
-}));
+}))
 
 export const SettingsCell_Component = ({title, subtitle, expandedView, disabled = false, expanded, handleChange}) => {
     //MARK: Hooks
@@ -44,12 +44,12 @@ export const SettingsCell_Component = ({title, subtitle, expandedView, disabled 
                 style={{fontSize: 50}}
                 color={"primary"}/>
         </div>}>
-            <div className={classes.information}>
+            <div className={classes.information} style={{backgroundColor: theme.palette.background.default}}>
                 <Typography className={classes.title} variant={"h2"}>{title}</Typography>
                 <Typography variant={"body1"}>{subtitle}</Typography>
             </div>
         </AccordionSummary>
-        <AccordionDetails style={{backgroundColor: "white"}}>
+        <AccordionDetails style={{backgroundColor: theme.palette.background.default}}>
             {expandedView}
         </AccordionDetails>
         </Accordion>

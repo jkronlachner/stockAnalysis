@@ -2,7 +2,7 @@ import {LoadingStatus} from "../../objects/enums/loading.enum";
 import {Basechart, Project} from "../../objects/project";
 const _ = require("lodash")
 
-const getAllProjects = state => _.omitBy(state.projects, (project) => project.userId && project.userId !== state.user.userId) ?? {};
+const getAllProjects = state => _.omitBy(state.projects, (project) => project.project.userId !== state.user.userId) ?? {};
 const getLatestProjects = (state, count) => {
     const projects = _.values(getAllProjects(state)).sort((p1, p2) => p1.project.status - p2.project.status)
     return _.slice(projects, 0, count)

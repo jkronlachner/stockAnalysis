@@ -13,26 +13,26 @@ import {getProjects} from "../../service/backendServices/BackendService";
 import {Settings} from "./Settings";
 import DetailView from "../project/DetailView";
 import {startStatusPolling} from "../../service/backendServices/Poller";
+import {FinishedProjectView} from "../project/FinishedProjectView";
 
 
 const useStyles = makeStyles((theme) => ({
     containerRoot: {
         paddingLeft: 40,
         paddingTop: 40,
-        overflow: "hidden",
+        overflow: "auto",
         width: "calc(100vw - 40px)",
         height: "calc(100vh - 40px)",
         display: "flex",
         flexDirection: "column",
         background: theme.palette.background.default
 
-    }, container: {
+    }, contentContainer: {
         backgroundColor: theme.palette.background.paper,
         borderRadius: "10px 0 0 0",
         flexGrow: 1,
         width: "calc(100% - 40px - 212.8px)",
         height: "100%",
-        overflow: "scroll",
     }, navigation: {
         //transition wont work because the whole route changes and redraws everything,
         //could be fixed if the route is moved down the widget tree only rerendering
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "row",
         justifyContent: "stretch",
+        overflow: "hidden"
     }
 }));
 export const RootView = () => {
@@ -88,7 +89,7 @@ export const RootView = () => {
             <div className={classes.navigation} style={hideNav ? {width: "0px", overflow: "hidden",} : {}}>
                 <SideNavigationBar_Component showNavigationBar={hideNav}/>
             </div>
-            <div className={classes.container}>
+            <div className={classes.contentContainer}>
                 {hideNav ? <IconButton onClick={() => {
                     if (history.length < 1) {
                         history.goBack()
