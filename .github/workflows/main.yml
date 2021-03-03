@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 12
       - run: yarn config set network-timeout 300000
-      - run: yarn install
+      - run: npm install
       # Runs a single command using the runners shell
       - name: Electron Builder Action
         # You may pin to the exact commit or the version.
