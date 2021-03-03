@@ -51,4 +51,3 @@ jobs:
           use_vue_cli: false
           # Other arguments to pass to the `electron-builder` command, e.g. configuration overrides
           max_attempts: 1
-          args: "-mw"
