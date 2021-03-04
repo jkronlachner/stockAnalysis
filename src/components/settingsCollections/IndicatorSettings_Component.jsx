@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/styles";
 import Grid from "@material-ui/core/Grid";
 import {TextField_Component} from "../inputs/TextField_Component";
 import Fab from "@material-ui/core/Fab";
-import {AddRounded, DeleteRounded, InsertChart, InsertChartRounded} from "@material-ui/icons";
+import {AddRounded, DeleteRounded, ErrorRounded, InsertChart, InsertChartRounded} from "@material-ui/icons";
 import {CustomTable_Component} from "../dataDisplay/Table_Component";
 import AddIndicatorDialog_Component from "../dialogs/AddIndicatorDialog_Component";
 import {useDispatch} from "react-redux";
@@ -108,9 +108,21 @@ export const IndicatorSettings_Component = ({project}) => {
                         onClick: (id) => onDelete(id)
                     },
                     {
-                        icon: (indicator) => indicator.status === Status.passed ? <InsertChartRounded fontSize={"large"} color={"primary"}/> : <CircularProgress/>,
+                        icon: (indicator) => {
+                            if(indicator.status === Status.passed) return <InsertChartRounded fontSize={"large"} color={"primary"}/>;
+                            if(indicator.status === Status.processing) return <CircularProgress/>;
+                            if(indicator.status === Status.error) return <ErrorRounded fontSize={"large"} color={"primary"}/>;
+                        },
                         onClick: (id) => {
-                            setSelectedIndicatorId(id)
+                            if(project.indicator.find(indicator => indicator._id === id).status === Status.passed){
+                                setSelectedIndicatorId(id)
+                            }else if(project.indicator.find(indicator => indicator._id === id).status === Status.error){
+                                alert.show("Beim erstellen des Indikators ist ein Fehler aufgetreten.", {
+                                    title: "",
+                                    closeCopy: "Okay",
+                                    actions: []
+                                })
+                            }
                         }
                     }
                 ]} settings={{header: header, data: project.indicator ?? []}} onDelete={onDelete}/>

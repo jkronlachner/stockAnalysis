@@ -49,7 +49,7 @@ export const SettingsCell_Component = ({title, subtitle, expandedView, disabled 
                 <Typography variant={"body1"}>{subtitle}</Typography>
             </div>
         </AccordionSummary>
-        <AccordionDetails style={{backgroundColor: theme.palette.background.default}}>
+        <AccordionDetails style={{backgroundColor: theme.palette.background.paper}}>
             {expandedView}
         </AccordionDetails>
         </Accordion>
