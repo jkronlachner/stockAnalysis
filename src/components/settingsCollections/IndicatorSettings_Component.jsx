@@ -114,13 +114,17 @@ export const IndicatorSettings_Component = ({project}) => {
                             if(indicator.status === Status.error) return <ErrorRounded fontSize={"large"} color={"primary"}/>;
                         },
                         onClick: (id) => {
-                            if(project.indicator.find(indicator => indicator._id === id).status === Status.passed){
+                            const indicator = {...project.indicator.find(indicator => indicator._id === id)}
+                            if(indicator.status === Status.passed){
                                 setSelectedIndicatorId(id)
-                            }else if(project.indicator.find(indicator => indicator._id === id).status === Status.error){
+                            }else if(indicator.status === Status.error){
                                 alert.show("Beim erstellen des Indikators ist ein Fehler aufgetreten.", {
                                     title: "",
                                     closeCopy: "Okay",
-                                    actions: []
+                                    actions: [{
+                                        copy: "Retry",
+                                        onClick: () => handleDone(indicator)
+                                    }]
                                 })
                             }
                         }

@@ -1,7 +1,7 @@
 //@flow
 import React, {useEffect, useState} from "react";
 import {makeStyles} from "@material-ui/styles";
-import {Button, Fab, useTheme} from "@material-ui/core";
+import {Button, Divider, Fab, useTheme} from "@material-ui/core";
 import {TextField_Component} from "../inputs/TextField_Component";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
@@ -72,6 +72,9 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         left: 15,
         top: 0,
+    },
+    dropContainer: {
+        padding: 0,
     }
 }));
 type Props = {
@@ -277,9 +280,9 @@ function BaseSettings_Component(props: Props) {
             rootProps = targetDataDropzone.getRootProps({className: 'dropzone'});
             inputProps = targetDataDropzone.getInputProps();
         }
-        return <section className="container">
+        return <section className={classes.dropContainer}>
             <div {...rootProps}>
-                <input {...inputProps} />
+                <input {...inputProps} style={{margin: 20}} />
                 {basedata ? <Typography variant={"body2"}>Ziehe deine Basisdaten hier hinein oder klicke um sie
                         auszuwählen.</Typography> :
                     <Typography variant={"body2"}>Ziehe deinen Zieldatensatz hier hinein oder klicke um ihn
@@ -359,13 +362,17 @@ function BaseSettings_Component(props: Props) {
                 {renderDrop(true)}
             </Grid>
             <Grid item xs={12}>
+                <Divider variant={"middle"}/>
+            </Grid>
+            <Grid item xs={12}>
                 <Typography variant={"h2"}
                             style={{marginBottom: 10}}>
                     {"Zieldatensatz hochladen."}
                 </Typography>
-                <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer"}}
+                <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer", paddingTop: 20}}
                             onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
                 <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)}
+                        style={{marginBottom: 20}}
                         disabled={!props.project.basecharts || props.project.basecharts.length === 0 || props.detail}>Zieldatensatz
                     generieren</Button>
                 {props.project.zieldatensatz ? <CustomTable_Component

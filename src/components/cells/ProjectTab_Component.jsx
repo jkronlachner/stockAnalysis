@@ -1,7 +1,7 @@
 import {makeStyles} from "@material-ui/styles";
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import {getStatusColor} from "../../objects/enums/status.enum";
+import {getStatusColor, Status} from "../../objects/enums/status.enum";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Skeleton from "react-loading-skeleton";
 import {useHistory} from "react-router-dom";
@@ -55,7 +55,7 @@ export const ProjectTab_Component = ({project, isLoading = false}) => {
         console.log("Clicked project was: ")
         if (project.projectId) {
             if (project.status !== 2) {
-                history.push(`/detail/${project.projectId}`);
+                history.push(`/finished/${project.projectId}`);
             } else {
                 history.push(`/project/${project.projectId}`);
             }
@@ -76,7 +76,7 @@ export const ProjectTab_Component = ({project, isLoading = false}) => {
                 <Typography className={classes.title} variant={"h2"}>{isLoading ?
                     <Skeleton width={120} height={50}/> : project.projectTitle}</Typography>
                 <Typography variant={"caption"}>{isLoading ?
-                    <Skeleton width={200} height={30}/> : project.statusText ?? ""}</Typography>
+                    <Skeleton width={200} height={30}/> : project.status === Status.passed ? "" : project.statusText ?? ""}</Typography>
             </div>
         </ButtonBase>
     </>

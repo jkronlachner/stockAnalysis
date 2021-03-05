@@ -1,12 +1,12 @@
 @font-face {
   font-family: "Biko", sans-serif;
-  src: local('Biko'), url("./fonts/Biko_Regular.otf");
+  src: local('Biko'), url(./fonts/Biko_Regular.otf);
   font-weight: normal;
 }
 
 @font-face {
   font-family: "Biko", sans-serif;
-  src: local('Biko'), url("./fonts/Biko_Bold.otf");
+  src: local('Biko'), url(./fonts/Biko_Bold.otf);
   font-weight: bold;
 }
 

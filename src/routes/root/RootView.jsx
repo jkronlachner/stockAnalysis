@@ -109,6 +109,7 @@ export const RootView = () => {
                     </Route>
                     <Route path={"/project/:id"}><ProjectSettings/></Route>
                     <Route path={"/detail/:id"}><DetailView/></Route>
+                    <Route path={"/finished/:id"}><FinishedProjectView/></Route>
                     <Route path={"/"} exact><Redirect to="/dashboard"/></Route>
                 </Switch>
             </div>
