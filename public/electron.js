@@ -161,7 +161,7 @@ app.on("ready", async () => {
     log.info('App starting...');
     const platform = os.platform() + "_" + os.arch();
     const version = app.getVersion();
-    autoUpdater.setFeedURL('https://stock-analysis-update-server.herokuapp.com/' + platform + '/' + version);
+    autoUpdater.setFeedURL('https://stock-analysis-update-server.herokuapp.com/' + version + '/' + platform);
     await autoUpdater.checkForUpdatesAndNotify();
     autoUpdater.on("error", (e) => log.error(e));
     autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))

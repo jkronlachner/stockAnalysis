@@ -1,1 +1,1 @@
-/Users/juliankronlachner/Desktop/lab73/Diplomarbeit/stockAnalysis/output/files
+C:\Users\julia\IdeaProjects\stockAnalysis\output/files
