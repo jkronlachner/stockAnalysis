@@ -1,7 +1,7 @@
 {
   "name": "stock-analysis",
   "description": "An easy way to check stocks and data for correlation",
-  "version": "0.1.8",
+  "version": "0.1.7+10",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.5",
