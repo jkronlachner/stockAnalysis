@@ -49,7 +49,11 @@ function createWindow() {
         } else {
             log.info("Quitting backend");
             const axios = require("axios")
-            axios.post("http://localhost:4321/actuator/shutdown")
+            axios.post("http://localhost:4321/actuator/shutdown", {}, {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
                 .then(r => log.info("Shutted backend down!"))
                 .catch(error => log.error("error while trying to shutdown backend", error))
             log.info("Tried to quit backend via request!");
@@ -73,21 +77,25 @@ function createWindow() {
     if (isDev) {
         //Add Dev Extensions to Chromium
         const ses = mainWindow.webContents.session
-        if(require("os").platform() === "win32"){
+        if (require("os").platform() === "win32") {
             log.info("Platform: WINDOWS");
             ses.loadExtension(
                 "C:\\Users\\julia\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\lmhkpmbekcpmknklioeibfkpmmfibljd\\2.17.0_0"
-            ).then(() => {})
+            ).then(() => {
+            })
             ses.loadExtension(
                 "C:\\Users\\julia\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\fmkadmapgofadopljbjfkapdkoienihi\\4.10.1_0"
-            ).then(() => {})
-        }else{
+            ).then(() => {
+            })
+        } else {
             ses.loadExtension(
                 "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0"
-            ).then(() => {})
+            ).then(() => {
+            })
             ses.loadExtension(
                 "/Users/juliankronlachner/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.10.0_0"
-            ).then(() => {})
+            ).then(() => {
+            })
         }
 
         mainWindow.webContents.openDevTools();
@@ -152,17 +160,27 @@ function startJavaBackend() {
 // On launch create app window
 app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
-    const os = require("os");
-    autoUpdater.logger = log;
-    autoUpdater.allowPrerelease = true;
-    autoUpdater.autoInstallOnAppQuit = true;
-    autoUpdater.autoDownload = true;
-    autoUpdater.logger.transports.file.level = 'info';
-    log.info('App starting...');
-    const platform = os.platform() + "_" + os.arch();
-    const version = app.getVersion();
-    autoUpdater.setFeedURL('https://stock-analysis-update-server.herokuapp.com/' + version + '/' + platform);
-    await autoUpdater.checkForUpdatesAndNotify();
+    try {
+        const os = require("os");
+        autoUpdater.logger = log;
+        autoUpdater.allowPrerelease = true;
+        autoUpdater.autoInstallOnAppQuit = true;
+        autoUpdater.autoDownload = true;
+        autoUpdater.logger.transports.file.level = 'info';
+        log.info('App starting...');
+        const platform = os.platform() + "_" + os.arch();
+        const version = app.getVersion();
+        if (os.platform() === "win32") {
+            autoUpdater.setFeedURL({url: 'https://stock-analysis-update-server.herokuapp.com/update/win32/' + version});
+            log.info("Feed URL: ", autoUpdater.getFeedURL())
+        } else if (os.platform() === "darwin") {
+            autoUpdater.setFeedURL({url: 'https://stock-analysis-update-server.herokuapp.com/update/' + platform + '/' + version});
+        }
+
+        await autoUpdater.checkForUpdatesAndNotify();
+    } catch (e) {
+        log.error("Autoupdate -Error!", e)
+    }
     autoUpdater.on("error", (e) => log.error(e));
     autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
     autoUpdater.on("download-progress", ({progress, precent}) => log.info("Downloading: " + progress))
@@ -216,7 +234,7 @@ app.on("window-all-closed", () => {
 app.on("activate", () => {
     if (mainWindow === null) {
         createWindow();
-    }else{
+    } else {
         mainWindow.show();
     }
 });
@@ -257,7 +275,7 @@ async function checkInstalls() {
     const pipListExec = await exec('pip3 list')
     log.info(pipListExec.stdout);
 
-    if(!pipListExec.stdout.includes("Keras")) {
+    if (!pipListExec.stdout.includes("Keras")) {
         log.info("keras not installed! installing...")
         const {stdout, stderr} = await exec("pip3 install keras").catch((e) =>
             dialog.showMessageBox({
@@ -269,7 +287,7 @@ async function checkInstalls() {
         log.silly(stdout, stderr)
         log.info("installed keras!")
     }
-    if(!pipListExec.stdout.includes("tensorflow")) {
+    if (!pipListExec.stdout.includes("tensorflow")) {
         log.info("tensor not installed! installing...")
         const {stdout, stderr} = await exec("pip3 install tensorflow").catch((e) => {
                 log.error(e)
@@ -283,7 +301,7 @@ async function checkInstalls() {
         log.silly(stdout, stderr)
         log.info("installed tensor!")
     }
-    if(!pipListExec.stdout.includes("numpy")) {
+    if (!pipListExec.stdout.includes("numpy")) {
         log.info("numpy not installed! installing...")
         const {stdout, stderr} = await exec("pip3 install numpy").catch((e) =>
             dialog.showMessageBox({
@@ -295,7 +313,7 @@ async function checkInstalls() {
         log.silly("silly!", stdout, stderr);
         log.info("installed numpy!")
     }
-    if(!pipListExec.stdout.includes("matplotlib")) {
+    if (!pipListExec.stdout.includes("matplotlib")) {
         log.info("matplot not installed! installing...")
         const {stdout, stderr} = await exec("pip3 install matplotlib").catch((e) =>
             dialog.showMessageBox({
@@ -312,8 +330,10 @@ async function checkInstalls() {
     //END OF CHECK
 }
 
-function showError(error){
-    if(!error || error === ""){return}
+function showError(error) {
+    if (!error || error === "") {
+        return
+    }
     log.error("Error: " + error);
     loading.close();
     dialog.showMessageBox({
