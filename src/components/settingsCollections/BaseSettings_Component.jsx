@@ -92,8 +92,8 @@ function BaseSettings_Component(props: Props) {
         acceptedFiles,
         getRootProps,
         getInputProps
-    } = useDropzone({accept: 'application/vnd.ms-excel, text/csv, text/x-csv', multiple: true});
-    const targetDataDropzone = useDropzone({accept: 'application/vnd.ms-excel, text/csv, text/x-csv', multiple: false})
+    } = useDropzone({accept: ['application/vnd.ms-excel, text/csv, text/x-csv', '.csv'], multiple: true});
+    const targetDataDropzone = useDropzone({accept: ['application/vnd.ms-excel, text/csv, text/x-csv','.csv'], multiple: false})
 
     //mark: states
     const [importDialogOpen, setImportDialogOpen] = useState(false);
@@ -106,6 +106,7 @@ function BaseSettings_Component(props: Props) {
 
     //<editor-fold desc="lifecycle">
     useEffect(() => {
+        console.log("Acccepted Files are: ", acceptedFiles)
         if (acceptedFiles.length === 0) {
             return;
         }
@@ -133,6 +134,7 @@ function BaseSettings_Component(props: Props) {
             })
             .catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
     }, [targetDataDropzone.acceptedFiles])
+
     //</editor-fold>
 
 

@@ -73,7 +73,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                             })
                             return;
                         }
-                        if(!result.meta.fields.toString().toLowerCase().includes("date") && open){
+                        if(!result.meta.fields.toString().toLowerCase().includes("date")){
                             alert.show("Die Datei muss mit eine Datumsspalte beinhalten!", {
                                 title: "",
                                 closeCopy: "",

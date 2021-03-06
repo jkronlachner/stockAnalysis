@@ -49,7 +49,9 @@ function createWindow() {
         } else {
             log.info("Quitting backend");
             const axios = require("axios")
-            axios.post("https://localhost:4321/actuator/shutdown").then(r => log.info("Shutted backend down!"))
+            axios.post("http://localhost:4321/actuator/shutdown")
+                .then(r => log.info("Shutted backend down!"))
+                .catch(error => log.error("error while trying to shutdown backend", error))
             log.info("Tried to quit backend via request!");
         }
 

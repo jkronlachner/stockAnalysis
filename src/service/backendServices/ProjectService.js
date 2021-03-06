@@ -54,7 +54,7 @@ const uploadFile = ({file, nickname, columns, setProgress}) => {
     let jsonData = JSON.stringify(jsonObject);
 
     formData.append("referenceChart", new Blob([jsonData], {type: "application/json"}));
-    formData.append("file", file);
+    formData.append("file", file, nickname);
 
     var config = {
         method: 'post',
@@ -62,7 +62,11 @@ const uploadFile = ({file, nickname, columns, setProgress}) => {
         data: formData,
         onUploadProgress: (progress: ProgressEvent) => {
             setProgress((progress.loaded / progress.total * 100).toFixed(0))
-        }
+        },
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            ...formData.headers,
+        },
     };
 
     return new Promise((resolve, reject) =>
