@@ -160,32 +160,10 @@ function startJavaBackend() {
 // On launch create app window
 app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
-
-        const os = require("os");
-    log.info('App starting...');
-    if(os.platform() === "darwin"){
-        var platform = os.platform() + '_' + os.arch();
-        var version = app.getVersion();
-        autoUpdater.setFeedURL('http://download.myapp.com/update/'+platform+'/'+version);
-        await autoUpdater.checkForUpdatesAndNotify();
-    }
-    autoUpdater.on("error", (e) => log.error(e));
-    autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
-    autoUpdater.on("download-progress", ({progress, precent}) => log.info("Downloading: " + progress))
-    autoUpdater.on("update-downloaded", () => {
-        var choice = electron.dialog.showMessageBoxSync(mainWindow, {
-            type: 'warning',
-            buttons: ['Jetzt installieren', 'Später installieren'],
-            title: 'Update verfügbar!',
-            message: 'Es ist ein Update für StockAnalysis verfügbar und heruntergeladen. Möchtest du es jetzt installieren?'
-        })
-        if (choice === 0) {
-            autoUpdater.quitAndInstall();
-        }
-    })
+    //TODO: REDOU AUTO UPDATER
 
     //Auto Updater END
-
+    log.info('App starting...');
     //Show loading window while checking java and starting backend
     showLoadingWindow()
 
