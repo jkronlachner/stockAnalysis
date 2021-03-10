@@ -162,13 +162,12 @@ app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
 
         const os = require("os");
-        log.info('App starting...');
-        await autoUpdater.checkForUpdatesAndNotify();
-
+    log.info('App starting...');
     if(os.platform() === "darwin"){
         var platform = os.platform() + '_' + os.arch();
         var version = app.getVersion();
         autoUpdater.setFeedURL('http://download.myapp.com/update/'+platform+'/'+version);
+        await autoUpdater.checkForUpdatesAndNotify();
     }
     autoUpdater.on("error", (e) => log.error(e));
     autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
@@ -241,6 +240,7 @@ async function checkInstalls() {
         return;
     }
     showError(javaExec.stderr)
+
     log.info("Checking python...")
     const pythonExec = await exec('python3 --version').catch(() => {
         //loading.close();
@@ -266,7 +266,7 @@ async function checkInstalls() {
 
     if (!pipListExec.stdout.includes("Keras")) {
         log.info("keras not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install keras").catch((e) =>
+        const {stdout, stderr} = await exec("pip install keras").catch((e) =>
             dialog.showMessageBox({
                 title: "Fehler beim installieren von keras!",
                 message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
@@ -275,7 +275,7 @@ async function checkInstalls() {
         )
         log.silly(stdout, stderr)
         log.info("installed keras!")
-    }
+    } else {log.info("Keras installed!")}
     if (!pipListExec.stdout.includes("tensorflow")) {
         log.info("tensor not installed! installing...")
         const {stdout, stderr} = await exec("pip install tensorflow").catch((e) => {
@@ -289,7 +289,7 @@ async function checkInstalls() {
         )
         log.silly(stdout, stderr)
         log.info("installed tensor!")
-    }
+    } else {log.info("tensorflow installed!")}
     if (!pipListExec.stdout.includes("numpy")) {
         log.info("numpy not installed! installing...")
         const {stdout, stderr} = await exec("pip install numpy").catch((e) =>
@@ -301,7 +301,7 @@ async function checkInstalls() {
         )
         log.silly("silly!", stdout, stderr);
         log.info("installed numpy!")
-    }
+    } else {log.info("numpy installed!")}
     if (!pipListExec.stdout.includes("matplotlib")) {
         log.info("matplot not installed! installing...")
         const {stdout, stderr} = await exec("pip install matplotlib").catch((e) =>
@@ -313,7 +313,7 @@ async function checkInstalls() {
         )
         log.silly("silly!", stdout, stderr);
         log.info("installed matplotlib!")
-    }
+    } else {log.info("matplotlib installed!")}
 
     log.info("Everything installed!")
     //END OF CHECK
