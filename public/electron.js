@@ -168,15 +168,6 @@ app.on("ready", async () => {
         autoUpdater.autoDownload = true;
         autoUpdater.logger.transports.file.level = 'info';
         log.info('App starting...');
-        const platform = os.platform() + "_" + os.arch();
-        const version = app.getVersion();
-        if (os.platform() === "win32") {
-            autoUpdater.setFeedURL({url: 'https://stock-analysis-update-server.herokuapp.com/update/win32/' + version});
-            log.info("Feed URL: ", autoUpdater.getFeedURL())
-        } else if (os.platform() === "darwin") {
-            autoUpdater.setFeedURL({url: 'https://stock-analysis-update-server.herokuapp.com/update/' + platform + '/' + version});
-        }
-
         await autoUpdater.checkForUpdatesAndNotify();
     } catch (e) {
         log.error("Autoupdate -Error!", e)
