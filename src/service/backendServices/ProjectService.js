@@ -4,6 +4,7 @@ import {Project} from "../../objects/project";
 import {parseProjectToProjectDTO} from "./JSONParser";
 import {BACKEND_URL} from "../../settings";
 import {Status} from "../../objects/enums/status.enum";
+import {startPolling} from "./Poller";
 const _ = require("lodash")
 
 const REQUEST_URL = BACKEND_URL;
@@ -107,7 +108,9 @@ const createNewProject = (project: Project) => {
     };
 
     return new Promise((resolve, reject) =>
-        Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
+        Axios.request(config).then(response => {
+            resolve(response.data)
+        }).catch(e => reject(e))
     )
 }
 

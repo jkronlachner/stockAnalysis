@@ -6,6 +6,7 @@ import {addDatabaseProjects} from "../../redux/actions/project_actions";
 import {signIn, signUp} from "./UserService";
 import {logIn, logOut} from "../../redux/actions/user_actions";
 import {Project} from "../../objects/project";
+import {startStatusPolling} from "./Poller";
 
 const _ = require("lodash")
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -27,6 +28,8 @@ export const getProjects = () => {
                 }
             }
         });
+        console.log("Start polling")
+        startStatusPolling(_.values(projects).map(p => p.project));
         store.dispatch(loaded());
         store.dispatch(addDatabaseProjects(projects))
         return Promise.resolve(_.values(projects).map(x => x.project));

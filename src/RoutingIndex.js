@@ -22,7 +22,7 @@ export default function RoutingIndex() {
         <Router>
             <Switch>
                 <Route path={"/login"}><LogIn/></Route>
-                <PrivateRoute path={"/"}><RootView/></PrivateRoute>
+                <Route path={"/"}><RootView/></Route>
             </Switch>
         </Router>
     </>

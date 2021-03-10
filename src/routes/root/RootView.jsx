@@ -70,12 +70,7 @@ export const RootView = () => {
             if (e.message.includes("There is no user")) {
                 history.replace("/login");
             }
-        }).then(projects => {
-                if (projects) {
-                    startStatusPolling(projects)
-                }
-            }
-        )
+        })
     }, [])
     //</editor-fold>
 

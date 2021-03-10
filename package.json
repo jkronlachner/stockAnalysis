@@ -1,7 +1,7 @@
 {
   "name": "stock-analysis",
   "description": "An easy way to check stocks and data for correlation",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.5",
@@ -93,7 +93,6 @@
           "provider": "github",
           "vPrefixedTagName": "false"
         }
-      
     },
     "win": {
       "target": [
@@ -103,7 +102,6 @@
           "provider": "github",
           "vPrefixedTagName": "false"
         }
-      
     },
     "nsis": {
       "perMachine": true,

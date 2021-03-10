@@ -45,6 +45,7 @@ export function parseJSONToProject(jsonObject: Object) {
     project.projectTitle = jsonObject.name;
     project.status = getStatusFromString(jsonObject.status)
     project.timeunit = jsonObject.timeUnit
+    project.userId = jsonObject.userId;
 
     if (jsonObject.referenceCharts) {
         project.basecharts = jsonObject.referenceCharts.map(x => {
