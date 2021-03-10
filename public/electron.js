@@ -12,7 +12,7 @@ const isDev = require("electron-is-dev");
 const spawn = require("child_process").spawn;
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const {autoUpdater} = require("electron-updater");
+const {autoUpdater} = electron;
 const url = require("url");
 const {dialog, Menu} = require("electron")
 
@@ -160,17 +160,15 @@ function startJavaBackend() {
 // On launch create app window
 app.on("ready", async () => {
     //Configure AutoUpdater with Update Server
-    try {
+
         const os = require("os");
-        autoUpdater.logger = log;
-        autoUpdater.allowPrerelease = true;
-        autoUpdater.autoInstallOnAppQuit = true;
-        autoUpdater.autoDownload = true;
-        autoUpdater.logger.transports.file.level = 'info';
         log.info('App starting...');
         await autoUpdater.checkForUpdatesAndNotify();
-    } catch (e) {
-        log.error("Autoupdate -Error!", e)
+
+    if(os.platform() === "darwin"){
+        var platform = os.platform() + '_' + os.arch();
+        var version = app.getVersion();
+        autoUpdater.setFeedURL('http://download.myapp.com/update/'+platform+'/'+version);
     }
     autoUpdater.on("error", (e) => log.error(e));
     autoUpdater.on("update-available", (info) => log.info("Update is available: " + info))
@@ -233,7 +231,7 @@ app.on("activate", () => {
 async function checkInstalls() {
     //Check java, python and libraries are installed
     log.info("Checking java...")
-    const javaExec = await exec('java --version');
+    const javaExec = await exec('java -version');
     if (javaExec.stdout.toString().includes("not recognized")) {
         await dialog.showMessageBox({
             title: "Fehler beim Starten der Applikation",
@@ -263,7 +261,7 @@ async function checkInstalls() {
     showError(pythonExec.stderr)
 
     log.info("Getting pip list");
-    const pipListExec = await exec('pip3 list')
+    const pipListExec = await exec('pip list')
     log.info(pipListExec.stdout);
 
     if (!pipListExec.stdout.includes("Keras")) {
@@ -280,7 +278,7 @@ async function checkInstalls() {
     }
     if (!pipListExec.stdout.includes("tensorflow")) {
         log.info("tensor not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install tensorflow").catch((e) => {
+        const {stdout, stderr} = await exec("pip install tensorflow").catch((e) => {
                 log.error(e)
                 dialog.showMessageBox({
                     title: "Fehler beim installieren von tensorflow!",
@@ -294,7 +292,7 @@ async function checkInstalls() {
     }
     if (!pipListExec.stdout.includes("numpy")) {
         log.info("numpy not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install numpy").catch((e) =>
+        const {stdout, stderr} = await exec("pip install numpy").catch((e) =>
             dialog.showMessageBox({
                 title: "Fehler beim installieren von numpy!",
                 message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
@@ -306,7 +304,7 @@ async function checkInstalls() {
     }
     if (!pipListExec.stdout.includes("matplotlib")) {
         log.info("matplot not installed! installing...")
-        const {stdout, stderr} = await exec("pip3 install matplotlib").catch((e) =>
+        const {stdout, stderr} = await exec("pip install matplotlib").catch((e) =>
             dialog.showMessageBox({
                 title: "Fehler beim installieren von matplotlib!",
                 message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
