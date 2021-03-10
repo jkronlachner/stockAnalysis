@@ -90,8 +90,8 @@
       "category": "public.app-category.utilities",
       "icon": "./build/icon.icns",
       "publish":{
-          "provider": "generic",
-          "url": "https://stock-analysis-update-server.herokuapp.com/update/"
+          "provider": "github",
+          "vPrefixedTagName": "false"
         }
       
     },
@@ -99,10 +99,9 @@
       "target": [
         "NSIS"
       ],
-      "publish":{
-       
-          "provider": "generic",
-          "url": "https://stock-analysis-update-server.herokuapp.com/update/"
+     "publish":{
+          "provider": "github",
+          "vPrefixedTagName": "false"
         }
       
     },
