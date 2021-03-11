@@ -166,6 +166,7 @@ app.on("ready", async () => {
 
     //Configure AutoUpdater with Update Server
     log.info("Configuring Update Server")
+    /*
     try {
         const server = 'https://stock-analysis-update-server.herokuapp.com'
         const url = `${server}/update/${process.platform}/${app.getVersion()}`
@@ -176,6 +177,7 @@ app.on("ready", async () => {
     } catch (e) {
         log.warn("Error within update Process: " + e)
     }
+     */
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
         const dialogOpts = {
             type: 'info',
