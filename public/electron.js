@@ -249,25 +249,12 @@ app.on("activate", () => {
 
 async function checkInstalls() {
     try {
-        const shell = require("shelljs");
-        shell.config.execPath = shell.which('node').toString()
-
-        if (!shell.which("java")) {
-            showError("Java is required to run StockAnalysis")
-            shell.exit(1)
+        await exec("pip install keras tensorflow numpy matplotlib")
+        log.info(exec.stdout.toString());
+        log.error(exec.stderr.toString());
+        if(exec.stderr.toString() !== ""){
+            showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib")
         }
-        if (!shell.which("python")) {
-            showError("Pyhton is required to run StockAnalysis")
-            shell.exit(1)
-        }
-        if (!shell.which("pip")) {
-            showError("Error while searching Python Packages with pip.")
-            shell.exit(1)
-        }
-        var pip = shell.exec('pip install tensorflow keras numpy matplotlib')
-        pip.stdout.on("data", (data) => {
-           log.info(data);
-        });
     } catch (e) {
         log.error("Error while trying to check installs")
         log.error(e)
