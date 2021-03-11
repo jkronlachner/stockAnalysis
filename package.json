@@ -104,17 +104,20 @@
     },
     "win": {
       "requestedExecutionLevel": "requireAdministrator",
-      "target": [
-        "NSIS"
-      ],
+      "target": "nsis",
       "publish": {
         "provider": "github",
         "vPrefixedTagName": "false"
       }
     },
     "nsis": {
-      "perMachine": true,
-      "runAfterFinish": true
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "oneClick": true,
+      "perMachine": false,
+      "deleteAppDataOnUninstall": true,
+      "allowToChangeInstallationDirectory": false,
+      "runAfterFinish": true,
+      "differentialPackage": true
     },
     "icon": "./build/icon.png",
     "files": [
