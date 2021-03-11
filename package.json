@@ -1,7 +1,7 @@
 {
   "name": "stock-analysis",
   "description": "An easy way to check stocks and data for correlation",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.5",
@@ -50,7 +50,9 @@
     "electron-dev": "concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-only": "electron .",
     "preelectron-pack": "npm run-script build",
-    "electron-pack": "electron-builder -w"
+    "electron-pack": "electron-builder -m",
+    "electron-pack-only-mac": "electron-builder -m",
+    "electron-pack-only-win": "electron-builder -w"
   },
   "eslintConfig": {
     "extends": [
@@ -87,6 +89,7 @@
     "productName": "StockAnalysis",
     "copyright": "Copyright © 2020 ${author}",
     "mac": {
+      "target": "pkg",
       "category": "public.app-category.utilities",
       "icon": "./build/icon.icns",
       "publish":{
@@ -95,6 +98,7 @@
         }
     },
     "win": {
+      "requestedExecutionLevel": "requireAdministrator",
       "target": [
         "NSIS"
       ],

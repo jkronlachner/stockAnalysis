@@ -4,7 +4,7 @@ import {Button, Typography} from "@material-ui/core";
 import {TextField_Component} from "../../components/inputs/TextField_Component";
 import {signInUser, signUpUser} from "../../service/backendServices/BackendService";
 import {useHistory} from "react-router-dom";
-import image from "../../assets/LogInSplash.svg";
+import image from "assets/LogInSplash.svg";
 const useStyles = makeStyles((theme) => ({
     loginRoot: {
         display: "flex",

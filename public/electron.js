@@ -35,6 +35,7 @@ function createWindow() {
             nodeIntegration: true,
             enableRemoteModule: true,
             devTools: true,
+            images: true
         },
     });
     mainWindow.on("close", (e) => {
@@ -62,14 +63,13 @@ function createWindow() {
     })
 
     mainWindow.setMenuBarVisibility(false);
-
     // Determine what to render based on environment
     mainWindow.loadURL(
         isDev
             ? "http://localhost:3000"
             : `file://${path.join(__dirname, "../build/index.html")}`
     ).then(() => {
-        loading.close();
+        //loading.close();
         mainWindow.show();
     })
 
@@ -104,7 +104,7 @@ function createWindow() {
     mainWindow.on("closed", () => (mainWindow = null));
 }
 
-function showLoadingWindow() {
+async function showLoadingWindow() {
     loading = new BrowserWindow({
         show: true,
         width: 350,
@@ -119,16 +119,17 @@ function showLoadingWindow() {
         resizable: false,
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
-
+            enableRemoteModule: true,
+            javascript: true,
+            plugins: true,
+            devTools: false,
+            nodeIntegrationInSubFrames: true,
+            nodeIntegrationInWorker: true,
         }
     })
-    loading.loadURL(url.format({
-        pathname: path.resolve(__dirname, isDev ? '../output/loading.html' : '../../../output/loading.html'),
-        protocol: "file:",
-        slashes: true
-    }));
-    loading.show();
+
+    await loading.loadFile(path.resolve(__dirname, isDev ? '../output/loading.html' : '../../../output/loading.html'));
+    await loading.show();
 }
 
 function startJavaBackend() {
@@ -159,15 +160,50 @@ function startJavaBackend() {
 
 // On launch create app window
 app.on("ready", async () => {
-    //Configure AutoUpdater with Update Server
-    //TODO: REDOU AUTO UPDATER
-
-    //Auto Updater END
-    log.info('App starting...');
     //Show loading window while checking java and starting backend
-    showLoadingWindow()
+    await showLoadingWindow()
 
-    await checkInstalls();
+
+    //Configure AutoUpdater with Update Server
+    log.info("Configuring Update Server")
+    try {
+        const server = 'https://stock-analysis-update-server.herokuapp.com'
+        const url = `${server}/update/${process.platform}/${app.getVersion()}`
+        autoUpdater.setFeedURL({url: url})
+        setInterval(() => {
+            autoUpdater.checkForUpdates()
+        }, 6000);
+    } catch (e) {
+        log.warn("Error within update Process: " + e)
+    }
+    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+        const dialogOpts = {
+            type: 'info',
+            buttons: ['Neustarten', 'Später'],
+            title: 'StockAnalysis Update',
+            message: process.platform === 'win32' ? releaseNotes : releaseName,
+            detail: 'Eine neue Version von StockAnalysis ist verfügbar! Möchtest du die Applikation jetzt neu starten?'
+        }
+        dialog.showMessageBox(dialogOpts).then((returnValue) => {
+            if (returnValue.response === 0) autoUpdater.quitAndInstall()
+        })
+    })
+
+    autoUpdater.on("update-available", () => {
+        console.log("Update is available")
+    })
+    autoUpdater.on("checking-for-update", () => {
+        console.log("Checking update!")
+    })
+    //Auto Updater END
+
+    log.info('App starting...');
+    console.log(loading.webContents);
+    loading.webContents.openDevTools()
+    loading.webContents.send("installer-update", "Warming up...");
+
+
+    //await checkInstalls();
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
@@ -182,7 +218,7 @@ app.on("ready", async () => {
             startJavaBackend();
         }
     }).catch(e => {
-        log.error("Error in request", e)
+        log.error("Error in request, prob not running. Starting...")
         startJavaBackend();
     })
     //END OF BACKEND CHECK
@@ -198,7 +234,9 @@ app.on("window-all-closed", () => {
 });
 
 app.on("activate", () => {
-    if (mainWindow === null) {
+    if (loading !== null) {
+        loading.show();
+    } else if (mainWindow === null) {
         createWindow();
     } else {
         mainWindow.show();
@@ -207,7 +245,12 @@ app.on("activate", () => {
 
 async function checkInstalls() {
     //Check java, python and libraries are installed
+
+    loading.webContents.send("installer-update", "Checking java...")
+
     log.info("Checking java...")
+    const user = await exec('whoami');
+    log.info("User: " + user.stdout)
     const javaExec = await exec('java -version');
     if (javaExec.stdout.toString().includes("not recognized")) {
         await dialog.showMessageBox({
@@ -217,10 +260,12 @@ async function checkInstalls() {
         });
         return;
     }
-    showError(javaExec.stderr)
-
+    if (!javaExec.stderr.toString().includes("version")) {
+        showError(javaExec.stderr)
+    }
+    loading.webContents.send("installer-update", "Checking python...")
     log.info("Checking python...")
-    const pythonExec = await exec('python3 --version').catch(() => {
+    const pythonExec = await exec('python --version').catch(() => {
         //loading.close();
         dialog.showMessageBox({
             title: "Fehler beim Starten der Applikation",
@@ -236,13 +281,19 @@ async function checkInstalls() {
         loading.close();
         return;
     }
-    showError(pythonExec.stderr)
+    if (!pythonExec.stderr.includes("Python")) {
+        showError(pythonExec.stderr)
+    }
+    loading.webContents.send("installer-update", "Checking pip packages...")
 
     log.info("Getting pip list");
     const pipListExec = await exec('pip list')
     log.info(pipListExec.stdout);
+    log.error(pipListExec.stderr);
+    showError(pipListExec.stderr);
 
     if (!pipListExec.stdout.includes("Keras")) {
+        loading.webContents.send("installer-update", "keras not installed! installing...")
         log.info("keras not installed! installing...")
         const {stdout, stderr} = await exec("pip install keras").catch((e) =>
             dialog.showMessageBox({
@@ -253,8 +304,13 @@ async function checkInstalls() {
         )
         log.silly(stdout, stderr)
         log.info("installed keras!")
-    } else {log.info("Keras installed!")}
+        loading.webContents.send("installer-update", "keras installed!")
+    } else {
+        loading.webContents.send("installer-update", "keras installed!")
+        log.info("Keras installed!")
+    }
     if (!pipListExec.stdout.includes("tensorflow")) {
+        loading.webContents.send("installer-update", "tensor not installed! installing...")
         log.info("tensor not installed! installing...")
         const {stdout, stderr} = await exec("pip install tensorflow").catch((e) => {
                 log.error(e)
@@ -267,8 +323,14 @@ async function checkInstalls() {
         )
         log.silly(stdout, stderr)
         log.info("installed tensor!")
-    } else {log.info("tensorflow installed!")}
+        loading.webContents.send("installer-update", "tensor installed!")
+    } else {
+        loading.webContents.send("installer-update", "tensor installed!")
+        log.info("tensorflow installed!")
+    }
     if (!pipListExec.stdout.includes("numpy")) {
+        loading.webContents.send("installer-update", "numpy not installed! installing...")
+
         log.info("numpy not installed! installing...")
         const {stdout, stderr} = await exec("pip install numpy").catch((e) =>
             dialog.showMessageBox({
@@ -278,9 +340,14 @@ async function checkInstalls() {
             })
         )
         log.silly("silly!", stdout, stderr);
+        loading.webContents.send("installer-update", "numpy installed!")
         log.info("installed numpy!")
-    } else {log.info("numpy installed!")}
+    } else {
+        loading.webContents.send("installer-update", "numpy installed!")
+        log.info("numpy installed!")
+    }
     if (!pipListExec.stdout.includes("matplotlib")) {
+        loading.webContents.send("installer-update", "matplotlib not installed! installing...")
         log.info("matplot not installed! installing...")
         const {stdout, stderr} = await exec("pip install matplotlib").catch((e) =>
             dialog.showMessageBox({
@@ -290,10 +357,15 @@ async function checkInstalls() {
             })
         )
         log.silly("silly!", stdout, stderr);
+        loading.webContents.send("installer-update", "matplotlib installed!")
         log.info("installed matplotlib!")
-    } else {log.info("matplotlib installed!")}
+    } else {
+        loading.webContents.send("installer-update", "matplotlib installed!")
+        log.info("matplotlib installed!")
+    }
 
     log.info("Everything installed!")
+    loading.webContents.send("installer-update", "Check complete! Starting...")
     //END OF CHECK
 }
 
