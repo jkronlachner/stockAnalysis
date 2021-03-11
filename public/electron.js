@@ -247,6 +247,7 @@ app.on("activate", () => {
 });
 
 async function checkInstalls() {
+    try{
     const shell = require("shelljs");
     shell.config.execPath = shell.which('node').toString()
 
@@ -263,6 +264,10 @@ async function checkInstalls() {
         shell.exit(1)
     }
     shell.exec('pip install tensorflow keras numpy matplotlib')
+    }catch (e) {
+        log.error("Error while trying to check installs")
+        log.error(e)
+    }
 }
 
 function showError(error) {

@@ -88,7 +88,7 @@
   "build": {
     "appId": "com.lab73.stockAnalysis",
     "productName": "StockAnalysis",
-    "copyright": "Copyright © 2020 ${author}",
+    "copyright": "Copyright © 2021 ${author}",
     "mac": {
       "category": "public.app-category.utilities",
       "icon": "./build/icon.icns",
