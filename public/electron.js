@@ -206,7 +206,6 @@ app.on("ready", async () => {
     //New check installed in sh file
 
 
-
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
@@ -247,24 +246,27 @@ app.on("activate", () => {
 });
 
 async function checkInstalls() {
-    try{
-    const shell = require("shelljs");
-    shell.config.execPath = shell.which('node').toString()
+    try {
+        const shell = require("shelljs");
+        shell.config.execPath = shell.which('node').toString()
 
-    if(!shell.which("java")){
-        showError("Java is required to run StockAnalysis")
-        shell.exit(1)
-    }
-    if(!shell.which("python")){
-        showError("Pyhton is required to run StockAnalysis")
-        shell.exit(1)
-    }
-    if(!shell.which("pip")){
-        showError("Error while searching Python Packages with pip.")
-        shell.exit(1)
-    }
-    shell.exec('pip install tensorflow keras numpy matplotlib')
-    }catch (e) {
+        if (!shell.which("java")) {
+            showError("Java is required to run StockAnalysis")
+            shell.exit(1)
+        }
+        if (!shell.which("python")) {
+            showError("Pyhton is required to run StockAnalysis")
+            shell.exit(1)
+        }
+        if (!shell.which("pip")) {
+            showError("Error while searching Python Packages with pip.")
+            shell.exit(1)
+        }
+        var pip = shell.exec('pip install tensorflow keras numpy matplotlib')
+        pip.stdout.on("data", (data) => {
+           log.info(data);
+        });
+    } catch (e) {
         log.error("Error while trying to check installs")
         log.error(e)
     }

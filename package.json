@@ -1,7 +1,7 @@
 {
   "name": "stock-analysis",
   "description": "An easy way to check stocks and data for correlation",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.5",
@@ -90,6 +90,11 @@
     "productName": "StockAnalysis",
     "copyright": "Copyright © 2021 ${author}",
     "mac": {
+      "extendInfo": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      },
       "category": "public.app-category.utilities",
       "icon": "./build/icon.icns",
       "publish": {
