@@ -1,6 +1,6 @@
 import React from "react";
 import {makeStyles} from "@material-ui/styles";
-import image from "../../../assets/LogoAnimationStockAnalysis.gif";
+import image from "../../../public/assets/LogoAnimationStockAnalysis.gif";
 
 const useStyles = makeStyles((theme) => ({
     root: {

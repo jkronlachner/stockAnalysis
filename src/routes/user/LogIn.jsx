@@ -4,7 +4,6 @@ import {Button, Typography} from "@material-ui/core";
 import {TextField_Component} from "../../components/inputs/TextField_Component";
 import {signInUser, signUpUser} from "../../service/backendServices/BackendService";
 import {useHistory} from "react-router-dom";
-import image from "../../../assets/LogInSplash.svg";
 const useStyles = makeStyles((theme) => ({
     loginRoot: {
         display: "flex",
@@ -114,7 +113,7 @@ export const LogIn = () => {
             </div>
         </div>
         <div className={classes.splash}>
-            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={image}
+            <img style={{objectFit: "scale-down", width: "100%", height: "100%"}} src={process.env.PUBLIC_URL + 'assets/LogInSplash.svg'}
                  alt={"Splash Image"}/>
         </div>
     </div>
