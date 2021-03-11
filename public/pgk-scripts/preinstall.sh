@@ -1,3 +1,4 @@
+#!/bin/bash
 if [[ "$java -version " == *"not recognized"* ]]; then
   echo "Java is not installed!"
   exit 1

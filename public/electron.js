@@ -198,12 +198,15 @@ app.on("ready", async () => {
     //Auto Updater END
 
     log.info('App starting...');
-    console.log(loading.webContents);
     loading.webContents.openDevTools()
     loading.webContents.send("installer-update", "Warming up...");
 
 
-    //await checkInstalls();
+    await checkInstalls();
+    //New check installed in sh file
+
+
+
     //Starting backend
     log.info("Searching for jar in Path: " + app.getAppPath());
 
@@ -244,129 +247,22 @@ app.on("activate", () => {
 });
 
 async function checkInstalls() {
-    //Check java, python and libraries are installed
+    const shell = require("shelljs");
+    shell.config.execPath = shell.which('node').toString()
 
-    loading.webContents.send("installer-update", "Checking java...")
-
-    log.info("Checking java...")
-    const user = await exec('whoami');
-    log.info("User: " + user.stdout)
-    const javaExec = await exec('java -version');
-    if (javaExec.stdout.toString().includes("not recognized")) {
-        await dialog.showMessageBox({
-            title: "Fehler beim Starten der Applikation",
-            message: "Java command not found. Please install Java command to continue!",
-            detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
-        });
-        return;
+    if(!shell.which("java")){
+        showError("Java is required to run StockAnalysis")
+        shell.exit(1)
     }
-    if (!javaExec.stderr.toString().includes("version")) {
-        showError(javaExec.stderr)
+    if(!shell.which("python")){
+        showError("Pyhton is required to run StockAnalysis")
+        shell.exit(1)
     }
-    loading.webContents.send("installer-update", "Checking python...")
-    log.info("Checking python...")
-    const pythonExec = await exec('python --version').catch(() => {
-        //loading.close();
-        dialog.showMessageBox({
-            title: "Fehler beim Starten der Applikation",
-            message: "Python ist auf diesem Computer nicht installiert. Bitte installiere Pyhton um StockAnalysis starten zu können. "
-        }).then(() => loading.close());
-    });
-    if (pythonExec.stdout.toString().includes("Python was not found")) {
-        await dialog.showMessageBox({
-            title: "Fehler beim Starten der Applikation",
-            message: "Python3 command not found. Please install Python3 to continue!",
-            detail: "Bitte installiere den Java Command auf deinem System um Stock Analysis zu verwenden"
-        });
-        loading.close();
-        return;
+    if(!shell.which("pip")){
+        showError("Error while searching Python Packages with pip.")
+        shell.exit(1)
     }
-    if (!pythonExec.stderr.includes("Python")) {
-        showError(pythonExec.stderr)
-    }
-    loading.webContents.send("installer-update", "Checking pip packages...")
-
-    log.info("Getting pip list");
-    const pipListExec = await exec('pip list')
-    log.info(pipListExec.stdout);
-    log.error(pipListExec.stderr);
-    showError(pipListExec.stderr);
-
-    if (!pipListExec.stdout.includes("Keras")) {
-        loading.webContents.send("installer-update", "keras not installed! installing...")
-        log.info("keras not installed! installing...")
-        const {stdout, stderr} = await exec("pip install keras").catch((e) =>
-            dialog.showMessageBox({
-                title: "Fehler beim installieren von keras!",
-                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
-                details: e
-            })
-        )
-        log.silly(stdout, stderr)
-        log.info("installed keras!")
-        loading.webContents.send("installer-update", "keras installed!")
-    } else {
-        loading.webContents.send("installer-update", "keras installed!")
-        log.info("Keras installed!")
-    }
-    if (!pipListExec.stdout.includes("tensorflow")) {
-        loading.webContents.send("installer-update", "tensor not installed! installing...")
-        log.info("tensor not installed! installing...")
-        const {stdout, stderr} = await exec("pip install tensorflow").catch((e) => {
-                log.error(e)
-                dialog.showMessageBox({
-                    title: "Fehler beim installieren von tensorflow!",
-                    message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
-                    details: e
-                })
-            }
-        )
-        log.silly(stdout, stderr)
-        log.info("installed tensor!")
-        loading.webContents.send("installer-update", "tensor installed!")
-    } else {
-        loading.webContents.send("installer-update", "tensor installed!")
-        log.info("tensorflow installed!")
-    }
-    if (!pipListExec.stdout.includes("numpy")) {
-        loading.webContents.send("installer-update", "numpy not installed! installing...")
-
-        log.info("numpy not installed! installing...")
-        const {stdout, stderr} = await exec("pip install numpy").catch((e) =>
-            dialog.showMessageBox({
-                title: "Fehler beim installieren von numpy!",
-                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
-                details: e
-            })
-        )
-        log.silly("silly!", stdout, stderr);
-        loading.webContents.send("installer-update", "numpy installed!")
-        log.info("installed numpy!")
-    } else {
-        loading.webContents.send("installer-update", "numpy installed!")
-        log.info("numpy installed!")
-    }
-    if (!pipListExec.stdout.includes("matplotlib")) {
-        loading.webContents.send("installer-update", "matplotlib not installed! installing...")
-        log.info("matplot not installed! installing...")
-        const {stdout, stderr} = await exec("pip install matplotlib").catch((e) =>
-            dialog.showMessageBox({
-                title: "Fehler beim installieren von matplotlib!",
-                message: "Falls es weiterhin fehlschlägt, installiere bitte die folgenden Python Libraries selbst: \n keras, tensorflow, matplotlib und numpy",
-                details: e
-            })
-        )
-        log.silly("silly!", stdout, stderr);
-        loading.webContents.send("installer-update", "matplotlib installed!")
-        log.info("installed matplotlib!")
-    } else {
-        loading.webContents.send("installer-update", "matplotlib installed!")
-        log.info("matplotlib installed!")
-    }
-
-    log.info("Everything installed!")
-    loading.webContents.send("installer-update", "Check complete! Starting...")
-    //END OF CHECK
+    shell.exec('pip install tensorflow keras numpy matplotlib')
 }
 
 function showError(error) {
