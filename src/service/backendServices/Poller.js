@@ -10,11 +10,13 @@ const _ = require("lodash");
 var interval;
 export const startStatusPolling = (projects: Project[]) => {
     console.log("Start polling with projects: ", projects);
-    _.omitBy(projects, v => v.status === Status.draft);
     projects.forEach(value => pollProjectStatus(value.projectId))
     if(interval) clearInterval(interval);
-    interval = setInterval(() => projects.filter(v => v.status === Status.processing).forEach(value => pollProjectStatus(value.projectId)), 3000)
-
+    interval = setInterval(() => {
+        const projects = projects.filter(v => v.status === Status.processing);
+        console.log("Updating projects:", projects);
+        projects.forEach(value => pollProjectStatus(value.projectId))
+    }, 3000)
 }
 
 export async function pollProjectStatus(projectId){

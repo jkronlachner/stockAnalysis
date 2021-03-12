@@ -4,7 +4,9 @@ import numpy
 from tensorflow import keras
 from keras import backend
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Dense, Dropout, LeakyReLU
+from keras.layers import LSTM
+from keras.optimizers import SGD
 
 ##########################
 # ----- Input Vars ----- #
@@ -18,6 +20,7 @@ from tensorflow.keras.layers import Dense, Dropout
 trainDataFile = sys.argv[1]
 inputColumnsVAR = sys.argv[2]
 outputColumnVAR = int(sys.argv[3])
+filePath = sys.argv[4]
 inputColumnsVAR = list(map(int, inputColumnsVAR.split(",")))
 
 print('arg', inputColumnsVAR)
@@ -139,7 +142,7 @@ if networkType == NetworkType.REGRESSION:
 
     # fit model
     history = model.fit(input, output, epochs=epochs, verbose=2, validation_split=validationSplit)
-    util.plotHistory(history)
+    util.plotHistory(history, filePath)
 
     # evaluate model
     scores = model.evaluate(input, output, verbose=2)
@@ -150,7 +153,7 @@ if networkType == NetworkType.REGRESSION:
     predict = model.predict(input, verbose=2)
     predict = predict[:, 0]  # predict is a matrix with one column
     predict = numpy.transpose(predict)
-    util.plotPrediction(output[phaseStart:phaseEnd], predict[phaseStart:phaseEnd])
+    util.plotPrediction(output[phaseStart:phaseEnd], predict[phaseStart:phaseEnd], filePath)
 
 elif networkType == NetworkType.BINARY_CLASSIFICATION:
 
@@ -167,7 +170,7 @@ elif networkType == NetworkType.BINARY_CLASSIFICATION:
     model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=[rmse])  # 'accuracy'
 
     history = model.fit(input, output, epochs=epochs, verbose=2, validation_split=validationSplit)
-    util.plotHistory(history)
+    util.plotHistory(history, filePath)
 
     scores = model.evaluate(input, output, verbose=2)
     for i in range(len(scores)):
@@ -176,7 +179,7 @@ elif networkType == NetworkType.BINARY_CLASSIFICATION:
     predict = model.predict(input, verbose=2)
     predict = predict[:, 0]
     predict = numpy.transpose(predict)
-    util.plotPrediction(output[phaseStart:phaseEnd], predict[phaseStart:phaseEnd])
+    util.plotPrediction(output[phaseStart:phaseEnd], predict[phaseStart:phaseEnd], filePath)
 
     util.recomputeBinaryAccuracy(output, predict)
 
@@ -199,7 +202,7 @@ elif networkType == NetworkType.MULTI_CLASSIFICATION:
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=[rmse])  # 'accuracy'
 
     history = model.fit(input, output, epochs=epochs, verbose=2, validation_split=validationSplit)
-    util.plotHistory(history)
+    util.plotHistory(history, filePath)
 
     scores = model.evaluate(input, output, verbose=2)
     for i in range(len(scores)):
@@ -208,7 +211,8 @@ elif networkType == NetworkType.MULTI_CLASSIFICATION:
     predict = model.predict(input, verbose=2)
     for i in range(numberOfClasses):
         util.plotPrediction(numpy.transpose(output[phaseStart:phaseEnd, i]),
-                            numpy.transpose(predict[phaseStart:phaseEnd, i]))
+                            numpy.transpose(predict[phaseStart:phaseEnd, i]),
+                            filePath)
 
 # serialize model
 modelJson = model.to_json()

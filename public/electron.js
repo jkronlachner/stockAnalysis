@@ -249,13 +249,13 @@ app.on("activate", () => {
 
 async function checkInstalls() {
     try {
-        await exec("pip install keras tensorflow numpy matplotlib")
-        log.info(exec.stdout.toString());
-        log.error(exec.stderr.toString());
-        if(exec.stderr.toString() !== ""){
-            showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib")
+        const pipExec = await exec("pip install keras tensorflow numpy matplotlib")
+        log.info(pipExec.stdout.toString());
+        if(pipExec.stderr.toString() !== ""){
+            showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib. " + pipExec.stderr)
         }
     } catch (e) {
+        showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib")
         log.error("Error while trying to check installs")
         log.error(e)
     }

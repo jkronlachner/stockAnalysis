@@ -29,8 +29,10 @@ def plotChart(name, chart):
     pyplot.show()
 
 
-def writeCSV(name, keys, dict_data):
-    csv_file = name
+def writeCSV(filepath, name, keys, dict_data):
+    print("writeCSV: " + filepath + "/" + name)
+
+    csv_file = filepath + "/"+name
     try:
         with open(csv_file, "w") as outfile:
             writer = csv.writer(outfile)
@@ -41,35 +43,18 @@ def writeCSV(name, keys, dict_data):
     full_path = os.path.abspath(csv_file)
     print("[path]", full_path)
 
-def plotHistory(history):
+def plotHistory(history, filepath):
     pyplot.figure(figsize=(constants.X_RES / constants.DPI, constants.Y_RES / constants.DPI), dpi=constants.DPI)
     evaluations = history.history.keys()
     i = 1
-    writeCSV("history.csv", evaluations, history.history)
-    for e in evaluations:
-        pyplot.subplot(len(evaluations), 1, i)
-        pyplot.plot(history.history[e])
-        pyplot.title(e, y=0.5, loc='right')
-        pyplot.grid(True)
-        i += 1
-    pyplot.xlabel('epoch')
-    pyplot.show()
+    writeCSV(filepath, "history.csv", evaluations, history.history)
 
 
-def plotPrediction(original, prediction):
+def plotPrediction(original, prediction, filepath):
     pyplot.figure(figsize=(constants.X_RES / constants.DPI, constants.Y_RES / constants.DPI), dpi=constants.DPI)
     data = {'original': original, 'prediction': prediction, 'difference': original - prediction}
     keys = data.keys()
-    writeCSV("plotPrediction.csv", keys, data)
-    i = 1
-    for k in keys:
-        pyplot.subplot(len(keys), 1, i)
-        pyplot.plot(data[k])
-        pyplot.title(k, y=0.5, loc='right')
-        pyplot.grid(True)
-        i += 1
-    pyplot.xlabel('time')
-    pyplot.show()
+    writeCSV(filepath, "plotPrediction.csv", keys, data)
 
 # see https://stackoverflow.com/questions/41327601/why-is-binary-crossentropy-more-accurate-than-categorical-crossentropy-for-multi/46004661
 def recomputeBinaryAccuracy(output, predict):
