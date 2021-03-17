@@ -134,7 +134,9 @@ async function showLoadingWindow() {
 
 function startJavaBackend() {
     log.info("Backend is not running... Starting!");
-    const jarPath = path.resolve(__dirname, isDev ? '../output' : '../../../output')
+    log.info(app.getAppPath())
+    const jarPath = path.resolve(app.getAppPath(), isDev ? 'output' : '../../output')
+    log.info("Searching for jar in Path: " + jarPath);
     child = spawn('cd ' + jarPath + '&& java', ['-jar', 'veskur-core-backend.jar', '--spring.profiles.active=prod'], {shell: true})
     child.noAsar = true;
     child.stdout.on('data', data => {
@@ -166,7 +168,7 @@ app.on("ready", async () => {
 
     //Configure AutoUpdater with Update Server
     log.info("Configuring Update Server")
-    /*
+
     try {
         const server = 'https://stock-analysis-update-server.herokuapp.com'
         const url = `${server}/update/${process.platform}/${app.getVersion()}`
@@ -177,7 +179,6 @@ app.on("ready", async () => {
     } catch (e) {
         log.warn("Error within update Process: " + e)
     }
-     */
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
         const dialogOpts = {
             type: 'info',
@@ -191,11 +192,15 @@ app.on("ready", async () => {
         })
     })
 
+
     autoUpdater.on("update-available", () => {
         console.log("Update is available")
     })
     autoUpdater.on("checking-for-update", () => {
         console.log("Checking update!")
+    })
+    autoUpdater.on("error", (error) => {
+        log.error(error)
     })
     //Auto Updater END
 
@@ -209,10 +214,10 @@ app.on("ready", async () => {
 
 
     //Starting backend
-    log.info("Searching for jar in Path: " + app.getAppPath());
 
     log.info("Checking if backend is running!");
     const axios = require("axios")
+    try{
     axios.get("http://localhost:4321/actuator/health").then(value => {
         if (value.data.status === "UP") {
             log.info("Backend is up! starting window");
@@ -225,6 +230,11 @@ app.on("ready", async () => {
         log.error("Error in request, prob not running. Starting...")
         startJavaBackend();
     })
+    }catch(e){
+        log.error("Something went wrong when trying to check if backend is running!")
+        log.error(e);
+        startJavaBackend()
+    }
     //END OF BACKEND CHECK
 });
 
@@ -251,7 +261,8 @@ async function checkInstalls() {
     try {
         const pipExec = await exec("pip install keras tensorflow numpy matplotlib")
         log.info(pipExec.stdout.toString());
-        if(pipExec.stderr.toString() !== ""){
+        if(!pipExec.stderr.toString().includes("WARNING")){
+            log.info(pipExec.stderr)
             showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib. " + pipExec.stderr)
         }
     } catch (e) {
