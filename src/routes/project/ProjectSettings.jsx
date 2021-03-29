@@ -228,10 +228,10 @@ const ProjectSettings = ({loading}) => {
                                     expandedView={<IndicatorSettings_Component project={project}/>}
                                     expanded={expanded} handleChange={(title) => handleExpandedChange(title)}
             />
-            <SettingsCell_Component title={"Optionen"} subtitle={getSubtitleForOptions()} disabled={!project}
+            {/**<SettingsCell_Component title={"Optionen"} subtitle={getSubtitleForOptions()} disabled={!project}
                                     expandedView={<h1>Es werden die Standartregeln verwendet. (BETA)</h1>}
                                     expanded={expanded} handleChange={(title) => handleExpandedChange(title)}
-            />
+            />**/}
             <hr/>
             <Button onClick={() => {
                 if (checkForProjectErrors()) {

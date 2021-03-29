@@ -223,7 +223,6 @@ function BaseSettings_Component(props: Props) {
             ...loading,
             '0': {name: "Generating Zieldatensatz...", error: null, progress: p}
         })).then(response => {
-            setLoading(_.omit(loading, '0'))
             handleChange("zieldatensatz", {id: response.id, filename: response.filename})
         }).catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
     }
@@ -371,21 +370,22 @@ function BaseSettings_Component(props: Props) {
                             style={{marginBottom: 10}}>
                     {"Zieldatensatz hochladen."}
                 </Typography>
-                <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer", paddingTop: 20}}
-                            onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
+                <Typography variant={"body2"}>Zieldatensatz generieren: </Typography>
+
                 <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)}
                         style={{marginBottom: 20}}
                         disabled={!props.project.basecharts || props.project.basecharts.length === 0 || props.detail}>Zieldatensatz
                     generieren</Button>
+                <Typography variant={"body2"}>oder bestehenden Zieldatesatz hochladen:</Typography>
                 {props.project.zieldatensatz ? <CustomTable_Component
                     actions={[
                         {
-                            icon: () => <EditRounded
+                            icon: () => <DeleteRounded
                                 fontSize={"large"}
                                 color={"primary"}
                             />,
                             onClick: (id) => {
-                                targetDataDropzone.open();
+                                handleChange("zieldatensatz", null)
                             }
                         }
                     ]}
@@ -398,6 +398,8 @@ function BaseSettings_Component(props: Props) {
                     }}
                 /> : <></>}
                 {renderDrop(false)}
+                <Typography variant={"body2"} style={{textDecoration: "underline", cursor: "pointer", paddingTop: 20}}
+                            onClick={showAlert}>Wie soll so ein Zieldatensatz aussehen?</Typography>
             </Grid>
             <Grid item xs={12}>
                 <TimeInput_Component readOnly={props.detail} timeunit={props.project.timeunit}

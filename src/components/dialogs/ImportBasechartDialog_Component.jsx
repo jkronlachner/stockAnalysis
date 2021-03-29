@@ -46,7 +46,6 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
     const [doneButtonEnabled, setDoneButtonEnabled] = useState(false);
 
 
-
     //<editor-fold desc="lifecycle">
     useEffect(() => {
         //Parse new files into basecharts
@@ -62,7 +61,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                     fastMode: true,
                     preview: 4,
                     complete: (result) => {
-                        if(result.meta.delimiter !== ',' && open){
+                        if (result.meta.delimiter !== ',' && open) {
                             alert.show("Die Datei muss mit einem Beistrich \",\" getrennt sein!", {
                                 title: "",
                                 closeCopy: "",
@@ -73,17 +72,36 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                             })
                             return;
                         }
-                        if(!result.meta.fields.toString().toLowerCase().includes("date")){
-                            alert.show("Die Datei muss mit eine Datumsspalte beinhalten!", {
+                        if (!result.meta.fields.toString().toLowerCase().includes("date")) {
+                            alert.show("Da die Datei keinen Header mit dem Namen \"Date\" enhält wird angenommen das die erste Spalte die Datumsspalte ist. Falls dies nicht korrekt ist füge bitte den korrekten Header hinzu.", {
                                 title: "",
                                 closeCopy: "",
                                 actions: [{
                                     copy: "Okay",
-                                    onClick: () => setOpen(false)
+                                    onClick: () => {
+                                        //Add provisional Headers
+                                        tempCharts.push({
+                                            name: file.name,
+                                            grouped: false,
+                                            basechart: new Basechart(),
+                                            headers: result.meta.fields,
+                                            provisionalHeaders: result.meta.fields.map((fieldName, index) => {
+                                                if (index === 0) {
+                                                    return "Date";
+                                                } else {
+                                                    return "Column " + index + "/ " + fieldName;
+                                                }
+                                            }),
+                                            preview: result.data,
+                                            nickname: file.name,
+                                            selectedRows: []
+                                        })
+                                        resolve();
+                                    }
                                 }]
                             })
                             return;
-                        }else{
+                        } else {
                             tempCharts.push({
                                 name: file.name,
                                 grouped: false,
@@ -93,14 +111,15 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                                 nickname: file.name,
                                 selectedRows: []
                             })
+                            resolve();
                         }
 
-                        resolve();
                     }
                 })
             })
             promises.push(filePromise);
         })
+        console.log("RESOLVE", tempCharts);
         Promise.all(promises).then(() => setBasecharts(tempCharts))
     }, [files])
     useEffect(() => isDoneButtonDisabled(), [basecharts])
@@ -166,19 +185,29 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
 
     //</editor-fold>
 
-    //<editor-fold desc="render helpers">
+    function getTableRow() {
+        if (basecharts[step].provisionalHeaders) {
+            console.log("b", basecharts[step])
+            return basecharts[step].provisionalHeaders.map(header => <TableCell>{header}</TableCell>)
+        } else {
+            return basecharts[step].headers.map(header => <TableCell>{header}</TableCell>)
+        }
+    }
+
+//<editor-fold desc="render helpers">
     function buildTable() {
         return <TableContainer>
             <Table style={{height: "200px"}}>
                 <TableHead>
                     <TableRow>
-                        {basecharts[step].headers.map(header => <TableCell>{header}</TableCell>)}
+                        {getTableRow()}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {basecharts[step].preview.map(row => {
                         return <TableRow>{
-                            basecharts[step].headers.map(header => {
+                            basecharts[step].headers.map((header, index) => {
+
                                 return <TableCell>{row[header] ?? ""}</TableCell>;
                             })
                         }</TableRow>
@@ -252,7 +281,8 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             {basecharts.length > 0 ? <Box display={"flex"} flexDirection={"column"}>
                 <div style={{marginTop: "2rem"}}>
                     <Typography variant={"subtitle2"}>Vorschau</Typography>
-                    <Typography variant={"caption"}>Falls die Datei keinen Header hat können die Spalten nicht mehr eindeutig identifiziert werden. Füge also bitte noch einen hinzu!</Typography>
+                    <Typography variant={"caption"}>Falls die Datei keinen Header hat können die Spalten nicht mehr
+                        eindeutig identifiziert werden. Füge also bitte noch einen hinzu!</Typography>
                     {buildTable()}
                 </div>
                 <div style={{marginTop: "4rem"}}>
@@ -275,7 +305,8 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                 </div>
             </Box> : <div>
                 <Typography variant={"h1"}>Lade Files.</Typography>
-                <Typography variant={"body1"}>Falls eines der Datein über 50MB hat kann das eine Weile dauern.</Typography>
+                <Typography variant={"body1"}>Falls eines der Datein über 50MB hat kann das eine Weile
+                    dauern.</Typography>
             </div>}
         </DialogContent>
         {basecharts.length > 1 ? <MobileStepper
@@ -285,6 +316,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             steps={(files ?? []).length}
             position={"static"}
             variant={"dots"}
-        />: <></>}
+        /> : <></>}
     </Dialog>
+
 }
