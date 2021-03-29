@@ -18,7 +18,7 @@ import {deleteProject} from "../../redux/actions/project_actions";
 const _ = require("lodash");
 
 const useStyles = makeStyles((theme) => ({
-    projectSettingsRoot: {padding: 20, overflow: "scroll", height: "90%"},
+    projectSettingsRoot: {padding: 20},
     bottomButton: {
         margin: 10,
         height: 60

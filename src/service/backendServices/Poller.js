@@ -14,7 +14,6 @@ export const startStatusPolling = (projects: Project[]) => {
     if(interval) clearInterval(interval);
     interval = setInterval(() => {
         const p = projects.filter(v => v.status === Status.waiting);
-        console.log("Updating projects:", p);
         p.forEach(value => pollProjectStatus(value.projectId))
     }, 3000)
 }

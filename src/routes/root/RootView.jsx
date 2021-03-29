@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         width: "calc(100% - 40px - 212.8px)",
         height: "100%",
+        overflow: "scroll",
     }, navigation: {
         //transition wont work because the whole route changes and redraws everything,
         //could be fixed if the route is moved down the widget tree only rerendering
