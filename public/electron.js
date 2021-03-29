@@ -263,7 +263,7 @@ async function checkInstalls() {
         log.info(pipExec.stderr.toString());
         log.info(pipExec.stdout.toString());
     } catch (e) {
-        showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib")
+        //showError("Libraries failed to install. Please install following python libraries yourself: keras, tensorflow, numpy and matplotlib")
         log.error("Error while trying to check installs")
         log.error(e)
     }
