@@ -112,11 +112,11 @@ export const Settings = () => {
         <Typography variant={"body1"}>Lösche alle deine Temporäre Files. Deine Draft-Projekte werden dadurch auch gelöscht.</Typography>
         <Button onClick={deleteTempFolder}  className={classes.deleteButton}>Indikatoren löschen.</Button>
         <Divider className={classes.divider}/>
-        <Typography variant={"subtitle2"} className={classes.subtitle}>Benutzer</Typography>
+        {/**<Typography variant={"subtitle2"} className={classes.subtitle}>Benutzer</Typography>
         <Typography variant={"body1"}>Eingeloggter Nutzer: {user.mail ?? "..."}</Typography>
         <Typography variant={"body2"}>Nutzer-Id: {user.userId}</Typography>
         <Button onClick={logoutUser} className={classes.deleteButton}>Nutzer ausloggen.</Button>
-        <Divider className={classes.divider}/>
+        <Divider className={classes.divider}/>**/}
         <Typography variant={"subtitle2"} className={classes.subtitle}>Speicherort</Typography>
         <Typography variant={"body1"}>Speicherort: {speicherOrt}</Typography>
         <Typography variant={"body2"}>Wähle bitte einen leeren Ordner aus!</Typography>

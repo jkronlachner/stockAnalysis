@@ -14,6 +14,8 @@ import {Settings} from "./Settings";
 import DetailView from "../project/DetailView";
 import {startStatusPolling} from "../../service/backendServices/Poller";
 import {FinishedProjectView} from "../project/FinishedProjectView";
+import {useDispatch} from "react-redux";
+import {logIn} from "../../redux/actions/user_actions";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -59,6 +61,7 @@ export const RootView = () => {
     const classes = useStyles();
     const location = useLocation();
     const history = useHistory();
+    const dispatch = useDispatch();
 
     //mark: variables
     const _ = require("lodash")
@@ -67,11 +70,7 @@ export const RootView = () => {
 
     //<editor-fold desc="lifecycle">
     useEffect(() => {
-        getProjects().catch((e) => {
-            if (e.message.includes("There is no user")) {
-                history.replace("/login");
-            }
-        })
+        dispatch(logIn("testing_id", "Default User"))
     }, [])
     //</editor-fold>
 
@@ -107,6 +106,7 @@ export const RootView = () => {
                     <Route path={"/detail/:id"}><DetailView/></Route>
                     <Route path={"/finished/:id"}><FinishedProjectView/></Route>
                     <Route path={"/"} exact><Redirect to="/dashboard"/></Route>
+                    <Route path={"*"}><Redirect to="/dashboard"/></Route>
                 </Switch>
             </div>
         </div>
