@@ -15,6 +15,7 @@ import {AddRounded} from "@material-ui/icons";
 import {Status} from "../../objects/enums/status.enum";
 import {connect} from "react-redux";
 import {IndicatorTemplate} from "../../objects/enums/indicatorTemplate";
+import {Box} from "@material-ui/core";
 
 //<editor-fold desc="Overhead">
 const useStyles = makeStyles((theme) => ({
@@ -174,8 +175,10 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
     >
         <DialogTitle>
             <Typography variant={"h2"}>
-                Indikatorenkombination
-                <span style={{color: theme.palette.primary.main}}> erstellen.</span>
+                <Box alignItems={"space-between"} justifyContent={"space-between"} display={"flex"} flexDirection={"row"}>
+                    <span>Indikatorenkombination<span style={{color: theme.palette.primary.main}}> erstellen.</span></span>
+                    <Button size={"medium"} variant={"outlined"} onClick={() => props.setOpen(false)}>Abbrechen</Button>
+                </Box>
             </Typography>
             <div className={classes.topDialog}>
                 <div
@@ -197,7 +200,7 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
                         }) : null}
                     />
                 </div>
-                <Button className={classes.button} onClick={handleCreateIndicator} color={"primary"}
+                <Button disabled={indicators.length === 0} className={classes.button} onClick={handleCreateIndicator} color={"primary"}
                         variant={"contained"}>Erstellen</Button>
             </div>
             <Typography variant={"caption"}>{indicatorError}</Typography>

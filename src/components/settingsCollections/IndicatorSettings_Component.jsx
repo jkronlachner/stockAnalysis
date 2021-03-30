@@ -14,6 +14,7 @@ import {generateIndicator} from "../../service/backendServices/IndicatorService"
 import {CircularProgress} from "@material-ui/core";
 import {Status} from "../../objects/enums/status.enum";
 import ChartPreviewDialog_Component from "../dialogs/ChartPreviewDialog_Component";
+import {projectsReducer} from "../../redux/reducers/projects_reducer";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -118,12 +119,16 @@ export const IndicatorSettings_Component = ({project}) => {
                             if(indicator.status === Status.passed){
                                 setSelectedIndicatorId(id)
                             }else if(indicator.status === Status.error){
-                                alert.show("Beim erstellen des Indikators ist ein Fehler aufgetreten.", {
+                                alert.show("Beim Erstellen des Indikators ist ein Fehler aufgetreten.", {
                                     title: "",
                                     closeCopy: "Okay",
                                     actions: [{
                                         copy: "Retry",
-                                        onClick: () => handleDone(indicator)
+                                        onClick: () => {
+                                            //First delete indicator
+                                            dispatch(removeIndicator(id, project.projectId))
+                                            handleDone(indicator)
+                                        }
                                     }]
                                 })
                             }

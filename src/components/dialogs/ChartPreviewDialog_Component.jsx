@@ -92,7 +92,8 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
             header: true,
             fastMode: true,
             complete: (result) => {
-                const basechart = store.projects[projectId].project.basecharts.find(basechart => basechart._id === bcId ? bcId : basechartId)
+                const basechart = store.projects[projectId].project.basecharts.find(basechart => basechart._id === (bcId ? bcId : basechartId))
+                console.log("basechart: ", basechart)
                 let resultData = [];
                 resultData = basechart.columns.map(column => {
                     return {
@@ -108,7 +109,6 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
                         })
                     }
                 })
-
                 setData(resultData);
                 if (bcId) transformIndicatorData(indicatorData, resultData)
                 setFields(result.meta.fields);

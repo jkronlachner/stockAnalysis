@@ -119,7 +119,6 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
             })
             promises.push(filePromise);
         })
-        console.log("RESOLVE", tempCharts);
         Promise.all(promises).then(() => setBasecharts(tempCharts))
     }, [files])
     useEffect(() => isDoneButtonDisabled(), [basecharts])
@@ -305,7 +304,7 @@ export const ImportBasechartDialog_Component = ({open, setOpen, onDone, files}) 
                 </div>
             </Box> : <div>
                 <Typography variant={"h1"}>Lade Files.</Typography>
-                <Typography variant={"body1"}>Falls eines der Datein über 50MB hat kann das eine Weile
+                <Typography variant={"body1"}>Falls eines der Dateien über 50MB hat kann das eine Weile
                     dauern.</Typography>
             </div>}
         </DialogContent>

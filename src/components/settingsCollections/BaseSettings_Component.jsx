@@ -219,10 +219,7 @@ function BaseSettings_Component(props: Props) {
     }
 
     function fileGeneratedCallback(fileContents: String) {
-        convertToFileAndUploadToServer(fileContents, p => setLoading({
-            ...loading,
-            '0': {name: "Generating Zieldatensatz...", error: null, progress: p}
-        })).then(response => {
+        convertToFileAndUploadToServer(fileContents, p => {}).then(response => {
             handleChange("zieldatensatz", {id: response.id, filename: response.filename})
         }).catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
     }
@@ -337,6 +334,7 @@ function BaseSettings_Component(props: Props) {
                                 color={"primary"}
                             />,
                             onClick: (id) => {
+                                console.log("Opening id: ", id);
                                 setChartPreviewDialog({
                                     open: true,
                                     basechartId: id
@@ -370,12 +368,13 @@ function BaseSettings_Component(props: Props) {
                             style={{marginBottom: 10}}>
                     {"Zieldatensatz hochladen."}
                 </Typography>
-                <Typography variant={"body2"}>Zieldatensatz generieren: </Typography>
+                <Typography variant={"body2"}>{props.project.zieldatensatz ? "Zieldatensatz neu generieren:" : "Zieldatensatz generieren:"} </Typography>
 
                 <Button variant={"outlined"} onClick={() => setTargetDataOpen(true)}
                         style={{marginBottom: 20}}
-                        disabled={!props.project.basecharts || props.project.basecharts.length === 0 || props.detail}>Zieldatensatz
-                    generieren</Button>
+                        disabled={!props.project.basecharts || props.project.basecharts.length === 0 || props.detail}>
+                    {props.project.zieldatensatz ? "Neu generieren" : "Zieldatensatz generieren"}
+                </Button>
                 <Typography variant={"body2"}>oder bestehenden Zieldatesatz hochladen:</Typography>
                 {props.project.zieldatensatz ? <CustomTable_Component
                     actions={[
