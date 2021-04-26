@@ -70,7 +70,7 @@ export const RootView = () => {
 
     //<editor-fold desc="lifecycle">
     useEffect(() => {
-        dispatch(logIn("testing_id", "Default User"))
+        dispatch(logIn("0", "Default User"))
         getProjects();
     }, [])
     //</editor-fold>
