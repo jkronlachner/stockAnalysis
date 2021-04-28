@@ -217,7 +217,7 @@ const AddIndicatorDialog_Component = (props: DialogProps) => {
                         if (value.building) {
                             return <IndicatorCreator_Component selectedBasechart={selectedBasechart}
                                                                indicatorTypes={props.indicatorTypes}
-                                                               createCallback={onCreate}/>
+                                                               createCallback={onCreate} isFirstOne={false}/>
                         } else {
                             return <Indicator_Component indicator={value} onCreateNew={() => handleCreateNew(index + 1)}
                                                         onDelete={() => handleDelete(index)}/>

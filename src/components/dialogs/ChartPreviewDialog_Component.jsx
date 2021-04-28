@@ -123,15 +123,16 @@ const ChartPreviewDialog_Component = ({projectId, basechartId, open, setOpen, in
         indicatorData = indicatorData.split("\n");
         const xAxe = data[0].data.map(row => row.x);
         const resultData = [];
+        const difference = xAxe.length - indicatorData.length;
         xAxe.forEach((xItem, index) => {
-            if (indicatorData.length - 1 === index || _.isNaN(parseFloat(indicatorData[index]))) {
-                return;
-            }
+            if(index < difference) return
+            if (_.isNaN(parseFloat(indicatorData[index-difference]))) return
             resultData.push({
                 x: xItem,
-                y: parseFloat(indicatorData[index])
+                y: parseFloat(indicatorData[index-difference])
             })
         })
+
         setData([...data, {id: "indicator", data: resultData}])
     }
 

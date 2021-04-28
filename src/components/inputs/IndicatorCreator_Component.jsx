@@ -69,12 +69,14 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
 
     //<editor-fold desc="helpers">
     function onCreate() {
-        if(!checkInputs()){
+        if (!checkInputs()) {
             setError("Indikator konnte nicht hinzugefügt werden, sind alle Felder ausgefüllt?");
             return
         }
         let indicatorParameters = []
+        console.log(refs);
         _.forEach(refs, (value, key) => {
+            if(!value.value){return}
             indicatorParameters.push({
                 name: key,
                 value: value.value === "" ? selectedIndicator.parameters.find(value1 => value1.name === key).value : value.value,
@@ -91,38 +93,43 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
         }
         props.createCallback(indicator);
     }
-    function checkInputs(){
+
+    function checkInputs() {
         _.forEach(refs, (v, k) => {
-            if(v.value === ""){
+            if (v.value === "") {
                 return false;
             }
         })
-        if(indicatorReferenceName === ""){
+        if (indicatorReferenceName === "") {
             return false;
         }
-        if(!selectedIndicator){
+        if (!selectedIndicator) {
             return false;
         }
-        if(selectedColumn.length === 0){
+        if (selectedColumn.length === 0) {
             return false;
         }
         return true;
     }
-    function onCancel(){
+
+    function onCancel() {
         props.createCallback();
     }
+
     function handleChange(e) {
         setError("");
         const indicatorId = e.target.value;
         setSelectedIndicator(props.indicatorTypes.find(value => value.name === indicatorId))
     }
-    function handleIndicatorNameChange(e){
+
+    function handleIndicatorNameChange(e) {
         setError("");
         const name = e.target.value;
         setIndicatorReferenceName(name);
     }
+
     function getAutocompleteName(x) {
-        switch(x){
+        switch (x) {
             case 0:
                 return "OPEN";
             case 1:
@@ -133,6 +140,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
                 return "CLOSE";
         }
     }
+
     function renderAutocomplete(value, onChange, name) {
         return <Grid item xs={3}><Autocomplete
             options={props.selectedBasechart.columns}
@@ -147,6 +155,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
             )}
         /></Grid>;
     }
+
     function renderGroupedAutocomplete() {
         return <Grid container spacing={2} direction={"row"}>
             {
@@ -160,6 +169,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
             }
         </Grid>
     }
+
     //</editor-fold>
 
     //mark: renders
@@ -167,12 +177,15 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
         <div className={classes.indicatorDefinitions}>
             <Grid container spacing={2}>
                 <Grid item xs={6}>
-                    <TextField_Component onChange={handleChange} selectItems={props.indicatorTypes.map((value: IndicatorTemplate) => {
-                        return <MenuItem key={value.name} value={value.name}>
-                            {value.name}
-                        </MenuItem>
-                    })} fullWidth label={"Indikator"}/>
-                    <TextField_Component onChange={handleIndicatorNameChange} helperText={"Keine Sonderzeichen! Nur Buchstaben und Zahlen!"} fullWidth label={"Indikatorname"} value={indicatorReferenceName}/>
+                    <TextField_Component onChange={handleChange}
+                                         selectItems={props.indicatorTypes.map((value: IndicatorTemplate) => {
+                                             return <MenuItem key={value.name} value={value.name}>
+                                                 {value.name}
+                                             </MenuItem>
+                                         })} fullWidth label={"Indikator"}/>
+                    <TextField_Component onChange={handleIndicatorNameChange}
+                                         helperText={"Keine Sonderzeichen! Nur Buchstaben und Zahlen!"} fullWidth
+                                         label={"Indikatorname"} value={indicatorReferenceName}/>
                 </Grid>
                 <Grid item xs={12}>
                     {selectedIndicator ?
@@ -184,11 +197,19 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
             </Grid>
             <Grid spacing={2} container className={classes.parameters}>
                 {selectedIndicator ? selectedIndicator.parameters.map(value => {
-                    refs[value.name] = (createRef())
-                    return <Grid xs={3} item>
-                        <TextField_Component ref={element => refs[value.name] = element} placeholder={value.name}
-                                             label={value.description} type={value.textfieldType}/>
+                    //Create Refs for from and for to field!
+                    refs[value.name+"-from"] = (createRef())
+                    refs[value.name+"-to"] = (createRef())
+                    return <><Grid xs={3} item>
+                        <TextField_Component ref={element => refs[value.name + "-from"] = element}
+                                             placeholder={value.name}
+                                             label={"(FROM) " + value.description} type={value.textfieldType}/>
                     </Grid>
+                        <Grid xs={3} item>
+                            <TextField_Component ref={element => refs[value.name + "-to"] = element}
+                                                 placeholder={value.name}
+                                                 label={"(TO)" + value.description} type={value.textfieldType}/>
+                        </Grid></>
                 }) : <div/>}
             </Grid>
 
@@ -199,7 +220,8 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
             </Typography>
             <Button className={classes.button} onClick={onCreate} color={"primary"} variant={"contained"}>Indikator
                 hinzufügen</Button>
-            {!props.isFirstOne ? <Button className={classes.button} onClick={onCancel} color={"primary"} variant={"text"}>Abbrechen</Button> : <div></div>}
+            {!props.isFirstOne ? <Button className={classes.button} onClick={onCancel} color={"primary"}
+                                         variant={"text"}>Abbrechen</Button> : <div></div>}
             {error !== "" ? <Typography variant={"caption"}>{error}</Typography> : <div></div>}
         </div>
     </div>
