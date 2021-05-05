@@ -63,7 +63,7 @@ export const HistoryCell_Component = ({project, duration}) => {
     function proceedToProject() {
         if (project.projectId) {
             if (project.status !== 2) {
-                history.push(`/detail/${project.projectId}`);
+                history.push(`/finished/${project.projectId}`);
             } else {
                 history.push(`/project/${project.projectId}`);
             }
