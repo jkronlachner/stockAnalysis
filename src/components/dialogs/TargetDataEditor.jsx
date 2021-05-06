@@ -104,25 +104,25 @@ export const TargetDataEditor = (props: { project: Project, open: boolean, setOp
                 setFields([...fields, ...basechart.columns])
             }
         }
-        Papa.parse(input, papaConfig)
+        Papa.parse(input, papaConfig);
     }
 
     function addEvent(point) {
         const dataArray: any[] = data[0].data;
         const indexOfPoint = dataArray.findIndex(value => value.x === point.data.x && value.y === point.data.y);
+        const sells = Array.from([...editorSettings.sells])
+        const buys = Array.from([...editorSettings.buys])
 
         if (editorSettings.editorMode === EditorMode.BUY) {
-            const buys = Array.from([...editorSettings.buys])
             for (let i = indexOfPoint; i < indexOfPoint + sliderValue; i++) {
-                if (!buys.includes(dataArray[i])) buys.push(dataArray[i])
+                if (!buys.includes(dataArray[i]) || !sells.includes(dataArray[i])) buys.push(dataArray[i])
             }
             setEditorSettings({
                 ...editorSettings, buys: buys
             })
         } else if (editorSettings.editorMode === EditorMode.SELL) {
-            const sells = Array.from([...editorSettings.sells])
             for (let i = indexOfPoint; i < indexOfPoint + sliderValue; i++) {
-                if (!sells.includes(dataArray[i])) sells.push(dataArray[i])
+                if (!sells.includes(dataArray[i]) || !buys.includes(dataArray[i])) sells.push(dataArray[i])
             }
             setEditorSettings({
                 ...editorSettings, sells: sells

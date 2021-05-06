@@ -30,10 +30,10 @@ const History = ({projects, loading}) => {
             <Typography variant={"body1"}>Projects are loading from Database... (Drafts are saved offline)</Typography>
             <HistoryCell_Component project={new Project()}/>
         </div>) : <span/>}
-        {projects ? Object.values(projects).map((cell) => {
-                return <HistoryCell_Component project={cell.project}
-                                              duration={cell.project.runtime}/>
-            }) : <span/>}
+        {projects ? Object.values(projects).sort((p1, p2) => p1.modified - p2.modified).map((cell) => {
+            return <HistoryCell_Component project={cell.project}
+                                          duration={cell.project.runtime}/>
+        }) : <span/>}
     </div>
 }
 const mapStateToProps = state => {

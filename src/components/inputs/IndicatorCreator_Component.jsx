@@ -196,7 +196,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
                 </Grid>
             </Grid>
             <Grid spacing={2} container className={classes.parameters}>
-                {selectedIndicator ? selectedIndicator.parameters.map(value => {
+                {selectedIndicator && selectedIndicator.parameters ? selectedIndicator.parameters.map(value => {
                     //Create Refs for from and for to field!
                     refs[value.name+"-from"] = (createRef())
                     refs[value.name+"-to"] = (createRef())
@@ -210,7 +210,7 @@ export const IndicatorCreator_Component = (props: IndicatorCreatorProps) => {
                                                  placeholder={value.name}
                                                  label={"(TO)" + value.description} type={value.textfieldType}/>
                         </Grid></>
-                }) : <div/>}
+                }) : selectedIndicator ? <p>Mit diesem Indikator stimmt etwas nicht! Es konnten keine Parameter gefunden werden!</p> : <div/>}
             </Grid>
 
         </div>

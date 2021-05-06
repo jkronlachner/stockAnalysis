@@ -218,22 +218,22 @@ app.on("ready", async () => {
     log.info("Checking if backend is running!");
     const axios = require("axios")
     try{
-    axios.get("http://localhost:4321/actuator/health").then(value => {
+    axios.get("http://localhost:8080/actuator/health").then(value => {
         if (value.data.status === "UP") {
             log.info("Backend is up! starting window");
             createWindow();
         } else {
             log.info("Backend is not up, starting...");
-            startJavaBackend();
+            //startJavaBackend();
         }
     }).catch(e => {
         log.error("Error in request, prob not running. Starting...")
-        startJavaBackend();
+        //startJavaBackend();
     })
     }catch(e){
         log.error("Something went wrong when trying to check if backend is running!")
         log.error(e);
-        startJavaBackend()
+        //startJavaBackend()
     }
     //END OF BACKEND CHECK
 });

@@ -5,7 +5,7 @@ const _ = require("lodash")
 
 const getAllProjects = state => _.omitBy(state.projects, (project) => project.project.userId !== state.user.userId) ?? {};
 const getLatestProjects = (state, count) => {
-    const projects = _.values(getAllProjects(state)).sort((p1, p2) => p1.project.status - p2.project.status)
+    const projects = _.values(getAllProjects(state)).filter((p1) => p1.project.status === Status.passed)
     return _.slice(projects, 0, count)
 }
 const getProjectById = (state, id) => {

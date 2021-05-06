@@ -94,6 +94,20 @@ const uploadTargetdataFile = ({file, setProgress}) => {
     )
 }
 
+const uploadTargetDataFileContent = ({content}) => {
+    let formData = new FormData();
+    formData.append("fileContent", content);
+
+    var config = {
+        method: 'post',
+        url: REQUEST_URL + "/file/targetDataSet/generate",
+        data: formData,
+    }
+    return new Promise((resolve, reject) =>
+        Axios.request(config).then(response => resolve(response.data)).catch(e => reject(e))
+    )
+}
+
 const createNewProject = (project: Project) => {
     console.log("Creating project!... ", project);
     var myHeaders = new Headers();
@@ -143,6 +157,7 @@ const deleteTempFiles = () => {
 
 export {
     deleteTempFiles,
+    uploadTargetDataFileContent,
     permaRemoveProject,
     uploadTargetdataFile,
     getAllProjects,

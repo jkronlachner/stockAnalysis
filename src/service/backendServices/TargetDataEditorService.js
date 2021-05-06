@@ -1,4 +1,5 @@
-import {uploadTargetdataFile} from "./ProjectService";
+import {uploadTargetdataFile, uploadTargetDataFileContent} from "./ProjectService";
+import Axios from "axios";
 
 const _ = require("lodash");
 const Papa = require('papaparse')
@@ -36,4 +37,11 @@ export const convertToFileAndUploadToServer = (fileContent: String, setProgress:
         uploadTargetdataFile({file: file, setProgress: setProgress}).then((r) => resolve({id: r, filename: "generated.csv"})).catch(reason => reject(reason));
     })
 
+}
+
+export const uploadFileContentsToServer = (fileContent: String) => {
+    console.log("Trying to upload content to server!")
+    return new Promise((resolve, reject) => {
+        uploadTargetDataFileContent(fileContent).then((r) => resolve({id: r, filename: "generated.csv"})).catch(reason => reject(reason))
+    });
 }

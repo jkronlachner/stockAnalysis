@@ -28,7 +28,10 @@ import {useAlert} from "react-alert";
 import {hasIndicator} from "../../redux/selectors/selectors";
 import ChartPreviewDialog_Component from "../dialogs/ChartPreviewDialog_Component";
 import {TargetDataEditor} from "../dialogs/TargetDataEditor";
-import {convertToFileAndUploadToServer} from "../../service/backendServices/TargetDataEditorService";
+import {
+    convertToFileAndUploadToServer,
+    uploadFileContentsToServer
+} from "../../service/backendServices/TargetDataEditorService";
 
 const _ = require('lodash');
 
@@ -219,7 +222,7 @@ function BaseSettings_Component(props: Props) {
     }
 
     function fileGeneratedCallback(fileContents: String) {
-        convertToFileAndUploadToServer(fileContents, p => {}).then(response => {
+        uploadFileContentsToServer(fileContents).then(response => {
             handleChange("zieldatensatz", {id: response.id, filename: response.filename})
         }).catch(e => setLoading({...loading, 0: {name: "Zieldatensatz", error: e, progress: -1}}))
     }
